@@ -12,6 +12,7 @@ import { PostgresDatabase } from '../../data';
 import { CityDB } from '../../data/interfaces';
 import { CustomError } from '../../domain/errors';
 import { CityMapper } from '../mappers/city.mapper';
+import { RECORD_STATUS } from '../../shared/constants';
 import { CityDataSource } from '../../domain/data_sources';
 
 export class CityDataSourceImpl implements CityDataSource {
@@ -37,7 +38,7 @@ export class CityDataSourceImpl implements CityDataSource {
         where lower(cit.cit_name) = $1
           and cit.id_province = $2
           and cit.cit_record_status = $3;`,
-        [name.toLowerCase(), id_province, '0'],
+        [name.toLowerCase(), id_province, RECORD_STATUS.AVAILABLE],
       );
       if (cityName.rows.length > 0) {
         throw CustomError.conflict('Ya existe una ciudad con el mismo nombre');
@@ -53,7 +54,7 @@ export class CityDataSourceImpl implements CityDataSource {
           cit_record_status)
         values ($1, $2, $3, $4)
         returning *;`,
-        [name, id_province, id_country, new Date(), '0'],
+        [name, id_province, id_country, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
       return CityMapper.entityFromObject(cityCreated.rows[0]);
@@ -81,7 +82,7 @@ export class CityDataSourceImpl implements CityDataSource {
         from core.core_city cit
         where cit.cit_id = $1
           and cit.cit_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (city.rows.length === 0) {
         throw CustomError.notFound(
@@ -102,7 +103,7 @@ export class CityDataSourceImpl implements CityDataSource {
           and cit.id_province = $2
           and cit.cit_id <> $3
           and cit.cit_record_status = $4;`,
-        [name.toLowerCase(), id_province, id, '0'],
+        [name.toLowerCase(), id_province, id, RECORD_STATUS.AVAILABLE],
       );
       if (cityName.rows.length > 0) {
         throw CustomError.conflict(
@@ -145,7 +146,7 @@ export class CityDataSourceImpl implements CityDataSource {
         from core.core_city cit
         where cit.cit_id = $1
           and cit.cit_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (result.rows.length === 0) {
         throw CustomError.notFound('No se ha encontrado la ciudad');
@@ -163,7 +164,11 @@ export class CityDataSourceImpl implements CityDataSource {
   async getAll(getAllCitiesDto: GetAllCitiesDto): Promise<City[]> {
     const { limit, offset, id_province } = getAllCitiesDto;
 
-    const params: (string | number)[] = ['0', limit, offset];
+    const params: (string | number)[] = [
+      RECORD_STATUS.AVAILABLE,
+      limit,
+      offset,
+    ];
 
     let query = `select cit.cit_id,
           cit.cit_name,
@@ -216,7 +221,7 @@ export class CityDataSourceImpl implements CityDataSource {
         from core.core_city cit
         where cit.cit_id = $1
           and cit.cit_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (result.rows.length === 0) {
         throw CustomError.notFound('No se ha encontrado la ciudad a eliminar');
@@ -228,7 +233,7 @@ export class CityDataSourceImpl implements CityDataSource {
         where cit_id = $1
           and cit_record_status = $2
         returning *;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
 
       return CityMapper.entityFromObject(deleted.rows[0]);

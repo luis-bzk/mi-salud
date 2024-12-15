@@ -17,6 +17,7 @@ import {
   IdentificationTypeDB,
   IdentificationTypeDetailDB,
 } from '../../data/interfaces';
+import { RECORD_STATUS } from '../../shared/constants';
 import { IdentificationTypeDataSource } from '../../domain/data_sources';
 import { IdentificationTypeMapper } from '../mappers/identification_type.mapper';
 
@@ -50,7 +51,7 @@ export class IdentificationTypeDataSourceImpl
         where
           lower(cit.ity_name) = $1
           and cit.ity_record_status = $2;`,
-        [name.toLowerCase(), '0'],
+        [name.toLowerCase(), RECORD_STATUS.AVAILABLE],
       );
 
       if (identTypeName.rows.length > 0) {
@@ -72,7 +73,14 @@ export class IdentificationTypeDataSourceImpl
           ity_record_status)
         values ($1,$2,$3,$4,$5,$6)
           returning *;`,
-        [name, description, abbreviation, id_country, new Date(), '0'],
+        [
+          name,
+          description,
+          abbreviation,
+          id_country,
+          new Date(),
+          RECORD_STATUS.AVAILABLE,
+        ],
       );
 
       return IdentificationTypeMapper.entityFromObject(
@@ -109,7 +117,7 @@ export class IdentificationTypeDataSourceImpl
         where
           cit.ity_id = $1
           and cit.ity_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (identType.rows.length === 0) {
         throw CustomError.notFound(
@@ -133,7 +141,7 @@ export class IdentificationTypeDataSourceImpl
           lower(cit.ity_name) = $1
           and cit.ity_id <> $2
           and cit.ity_record_status = $3;`,
-        [name.toLowerCase(), id, '0'],
+        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
       );
       if (identTypeName.rows.length > 0) {
         throw CustomError.conflict(
@@ -184,7 +192,7 @@ export class IdentificationTypeDataSourceImpl
         where
           cit.ity_id = $1
           and cit.ity_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (identType.rows.length === 0) {
         throw CustomError.notFound(
@@ -223,7 +231,7 @@ export class IdentificationTypeDataSourceImpl
         order by
           cit.ity_name
         limit $2 offset $3;`,
-        ['0', limit, offset],
+        [RECORD_STATUS.AVAILABLE, limit, offset],
       );
 
       return IdentificationTypeMapper.entitiesFromArray(registers.rows);
@@ -265,7 +273,7 @@ export class IdentificationTypeDataSourceImpl
         order by
           cit.ity_name
         limit $2 offset $3;`,
-        ['0', limit, offset],
+        [RECORD_STATUS.AVAILABLE, limit, offset],
       );
 
       return IdentificationTypeMapper.entitiesFromArrayDetail(registers.rows);
@@ -298,7 +306,7 @@ export class IdentificationTypeDataSourceImpl
         where
           cit.ity_id = $1
           and cit.ity_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (identType.rows.length === 0) {
         throw CustomError.notFound(

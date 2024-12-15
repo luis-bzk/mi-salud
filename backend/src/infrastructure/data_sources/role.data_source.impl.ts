@@ -12,6 +12,7 @@ import { PostgresDatabase } from '../../data';
 import { RoleDB } from '../../data/interfaces';
 import { CustomError } from '../../domain/errors';
 import { RoleMapper } from '../mappers/role.mapper';
+import { RECORD_STATUS } from '../../shared/constants';
 import { RoleDataSource } from '../../domain/data_sources';
 
 export class RoleDataSourceImpl implements RoleDataSource {
@@ -37,7 +38,7 @@ export class RoleDataSourceImpl implements RoleDataSource {
         where
           lower(cr.rol_name) = $1
           and cr.rol_record_status = $2;`,
-        [name, '0'],
+        [name, RECORD_STATUS.AVAILABLE],
       );
       if (roleName.rows.length > 0) {
         throw CustomError.conflict('Ya existe un rol con el nombre ingresado');
@@ -53,7 +54,7 @@ export class RoleDataSourceImpl implements RoleDataSource {
           rol_record_status)
         values ($1,$2,$3,$4) 
         returning *;`,
-        [name, description, new Date(), '0'],
+        [name, description, new Date(), RECORD_STATUS.AVAILABLE],
       );
       return RoleMapper.entityFromObject(newRole.rows[0]);
     } catch (error) {
@@ -82,7 +83,7 @@ export class RoleDataSourceImpl implements RoleDataSource {
         where
           cr.rol_id = $1
           and cr.rol_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (roleFound.rows.length === 0) {
         throw CustomError.notFound('No se ha encontrado el rol a actualizar');
@@ -102,7 +103,7 @@ export class RoleDataSourceImpl implements RoleDataSource {
           lower(cr.rol_name) = $1
           and cr.rol_id <> $2
           and cr.rol_record_status = $3;`,
-        [name.toLowerCase(), id, '0'],
+        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
       );
       if (roleName.rows.length > 0) {
         throw CustomError.conflict(
@@ -150,7 +151,7 @@ export class RoleDataSourceImpl implements RoleDataSource {
           where
             cr.rol_id = $1
             and cr.rol_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (roleFound.rows.length === 0) {
         throw CustomError.notFound('No se ha encontrado el rol a actualizar');
@@ -183,7 +184,7 @@ export class RoleDataSourceImpl implements RoleDataSource {
         order by
           cr.rol_name
         limit $2 offset $3;`,
-        ['0', limit, offset],
+        [RECORD_STATUS.AVAILABLE, limit, offset],
       );
 
       return RoleMapper.entitiesFromArray(roles.rows);
@@ -214,7 +215,7 @@ export class RoleDataSourceImpl implements RoleDataSource {
           where
             cr.rol_id = $1
             and cr.rol_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (roleFound.rows.length === 0) {
         throw CustomError.notFound('No se ha encontrado el rol a eliminar');

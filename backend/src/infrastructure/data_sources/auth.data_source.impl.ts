@@ -16,6 +16,7 @@ import { GeneratorValues } from '../../utils';
 import { UserDB } from '../../data/interfaces';
 import { CustomError } from '../../domain/errors';
 import { UserMapper } from '../mappers/user.mapper';
+import { RECORD_STATUS } from '../../shared/constants';
 import { AuthDataSource } from '../../domain/data_sources';
 
 type HashFunction = (password: string) => string;
@@ -47,7 +48,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
         from core.core_user use
         where use.use_email = $1
           and use.use_record_status = $2;`,
-        [email, '0'],
+        [email, RECORD_STATUS.AVAILABLE],
       );
 
       if (response.rows.length === 0) {
@@ -83,7 +84,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
       // validate email
       const response = await this.pool.query<UserDB>(
         'select * from core.core_user use where use.use_email = $1 and use.use_record_status = $2',
-        [email, '0'],
+        [email, RECORD_STATUS.AVAILABLE],
       );
 
       if (response.rows.length > 0) {
@@ -110,7 +111,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
           this.hashPassword(password),
           GeneratorValues.tokenGenerator(),
           new Date(),
-          '0',
+          RECORD_STATUS.AVAILABLE,
         ],
       );
 
@@ -142,7 +143,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
         from core.core_user use
         where use.use_email = $1
           and use.use_record_status = $2;`,
-        [email, '0'],
+        [email, RECORD_STATUS.AVAILABLE],
       );
       if (user_found.rows.length === 0) {
         throw CustomError.notFound(
@@ -156,7 +157,11 @@ export class AuthDataSourceImpl implements AuthDataSource {
       where use_id = $2
       and use_record_status = $3
       returning *;`,
-        [GeneratorValues.tokenGenerator(), user_found.rows[0].use_id, '0'],
+        [
+          GeneratorValues.tokenGenerator(),
+          user_found.rows[0].use_id,
+          RECORD_STATUS.AVAILABLE,
+        ],
       );
 
       return UserMapper.entityFromObject(update_user.rows[0]);
@@ -187,7 +192,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
         from core.core_user use
         where use.use_token = $1
           and use.use_record_status = $2;`,
-        [token, '0'],
+        [token, RECORD_STATUS.AVAILABLE],
       );
 
       if (user_found.rows.length === 0) {
@@ -203,7 +208,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
         where use_token = $3
           and use_record_status = $4
         returning *;`,
-        [null, this.hashPassword(password), token, '0'],
+        [null, this.hashPassword(password), token, RECORD_STATUS.AVAILABLE],
       );
 
       return UserMapper.entityFromObject(updated_user.rows[0]);
@@ -234,7 +239,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
         from core.core_user use
         where use.use_token = $1
           and use.use_record_status = $2;`,
-        [token, '0'],
+        [token, RECORD_STATUS.AVAILABLE],
       );
 
       if (user_found.rows.length === 0) {
@@ -264,7 +269,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
       from core.core_user use
       where use.use_token = $1
         and use.use_record_status = $2;`,
-        [token, '0'],
+        [token, RECORD_STATUS.AVAILABLE],
       );
 
       if (user_found.rows.length === 0) {
@@ -279,7 +284,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
       where use_token = $2
         and use_record_status = $3
       returning *;`,
-        [null, token, '0'],
+        [null, token, RECORD_STATUS.AVAILABLE],
       );
 
       return UserMapper.entityFromObject(updated_user.rows[0]);
@@ -313,7 +318,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
         where
           use.use_id = $1
           and use.use_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (userFound.rows.length === 0) {
         throw CustomError.notFound(`No se ha encontrado el usuario solicitado`);

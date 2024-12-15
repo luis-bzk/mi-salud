@@ -14,6 +14,7 @@ import { UserDB } from '../../data/interfaces';
 import { CustomError } from '../../domain/errors';
 import { BcryptAdapter } from '../../config/bcrypt';
 import { UserMapper } from '../mappers/user.mapper';
+import { RECORD_STATUS } from '../../shared/constants';
 import { UserDataSource } from '../../domain/data_sources';
 
 type HashFunction = (password: string) => string;
@@ -47,7 +48,7 @@ export class UserDataSourceImpl implements UserDataSource {
         where
           use.use_email = $1
           and use.use_record_status = $2;`,
-        [email.toLowerCase(), '0'],
+        [email.toLowerCase(), RECORD_STATUS.AVAILABLE],
       );
       if (userEmail.rows.length > 0) {
         throw CustomError.conflict(
@@ -69,7 +70,7 @@ export class UserDataSourceImpl implements UserDataSource {
           this.hashPassword(generatedPassword),
           null,
           new Date(),
-          '0',
+          RECORD_STATUS.AVAILABLE,
         ],
       );
 
@@ -106,7 +107,7 @@ export class UserDataSourceImpl implements UserDataSource {
         where
           use.use_id = $1
           and use.use_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (userFound.rows.length === 0) {
         throw CustomError.notFound(
@@ -131,7 +132,7 @@ export class UserDataSourceImpl implements UserDataSource {
           use.use_email = $1
           and use.use_id <> $2
           and use.use_record_status = $3;`,
-        [email, id, '0'],
+        [email, id, RECORD_STATUS.AVAILABLE],
       );
       if (userWithEmail.rows.length >= 1) {
         throw CustomError.conflict(
@@ -148,7 +149,7 @@ export class UserDataSourceImpl implements UserDataSource {
         where use_id = $4
           and use_record_status = $5
           returning *;`,
-        [name, last_name, email, id, '0'],
+        [name, last_name, email, id, RECORD_STATUS.AVAILABLE],
       );
 
       return UserMapper.entityFromObject(updatedUser.rows[0]);
@@ -180,7 +181,7 @@ export class UserDataSourceImpl implements UserDataSource {
         where
           use.use_id = $1
           and use.use_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (userFound.rows.length === 0) {
         throw CustomError.notFound(`No se ha encontrado el usuario solicitado`);
@@ -217,7 +218,7 @@ export class UserDataSourceImpl implements UserDataSource {
         order by
           use.use_id desc
         limit $2 offset $3;`,
-        ['0', limit, offset],
+        [RECORD_STATUS.AVAILABLE, limit, offset],
       );
 
       return UserMapper.entitiesFromArray(users.rows);
@@ -250,7 +251,7 @@ export class UserDataSourceImpl implements UserDataSource {
         where
           use.use_id = $1
           and use.use_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (userFound.rows.length === 0) {
         throw CustomError.notFound(`No se ha encontrado el usuario a eliminar`);

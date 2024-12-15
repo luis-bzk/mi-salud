@@ -12,6 +12,7 @@ import { PostgresDatabase } from '../../data';
 import { GenreDB } from '../../data/interfaces';
 import { CustomError } from '../../domain/errors';
 import { GenreMapper } from '../mappers/genre.mapper';
+import { RECORD_STATUS } from '../../shared/constants';
 import { GenreDataSource } from '../../domain/data_sources';
 
 export class GenreDataSourceImpl implements GenreDataSource {
@@ -39,7 +40,7 @@ export class GenreDataSourceImpl implements GenreDataSource {
         where
           lower(cg.gen_name) = $1
           and cg.gen_record_status = $2;`,
-        [name.toLowerCase(), '0'],
+        [name.toLowerCase(), RECORD_STATUS.AVAILABLE],
       );
       if (genreName.rows.length > 0) {
         throw CustomError.conflict('Ya existe un genero con el mismo nombre');
@@ -57,7 +58,7 @@ export class GenreDataSourceImpl implements GenreDataSource {
             gen_record_status)
           values ($1,$2,$3,$4,$5)
           returning *;`,
-        [name, description, abbreviation, new Date(), '0'],
+        [name, description, abbreviation, new Date(), RECORD_STATUS.AVAILABLE],
       );
       return GenreMapper.entityFromObject(genreCreated.rows[0]);
     } catch (error) {
@@ -86,7 +87,7 @@ export class GenreDataSourceImpl implements GenreDataSource {
         where
           cg.gen_id = $1
         and cg.gen_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (genreFound.rows.length === 0) {
         throw CustomError.notFound(
@@ -109,7 +110,7 @@ export class GenreDataSourceImpl implements GenreDataSource {
           lower(cg.gen_name) = $1
           and cg.gen_id <> $2
           and cg.gen_record_status = $3;`,
-        [name.toLowerCase(), id, '0'],
+        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
       );
       if (genreName.rows.length > 0) {
         throw CustomError.conflict(
@@ -157,7 +158,7 @@ export class GenreDataSourceImpl implements GenreDataSource {
         where
           cg.gen_id = $1
         and cg.gen_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (genreFound.rows.length === 0) {
         throw CustomError.notFound('No se ha encontrado el registro deseado');
@@ -219,7 +220,7 @@ export class GenreDataSourceImpl implements GenreDataSource {
         where
           cg.gen_id = $1
         and cg.gen_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (genreFound.rows.length === 0) {
         throw CustomError.notFound(

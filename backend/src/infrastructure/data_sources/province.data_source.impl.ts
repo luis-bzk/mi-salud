@@ -11,6 +11,7 @@ import { PostgresDatabase } from '../../data';
 import { Province } from '../../domain/entities';
 import { CustomError } from '../../domain/errors';
 import { ProvinceDB } from '../../data/interfaces';
+import { RECORD_STATUS } from '../../shared/constants';
 import { ProvinceMapper } from '../mappers/province.mapper';
 import { ProvinceDataSource } from '../../domain/data_sources';
 
@@ -38,7 +39,7 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
         where lower(pro.pro_name) = $1
           and pro.id_country = $2
           and pro.pro_record_status = $3;`,
-        [name.toLowerCase(), id_country, '0'],
+        [name.toLowerCase(), id_country, RECORD_STATUS.AVAILABLE],
       );
 
       if (result.rows.length > 0) {
@@ -58,7 +59,7 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
          pro_record_status)
         values ($1, $2, $3, $4, $5, $6)
         returning *;`,
-        [name, code, id_country, prefix, new Date(), '0'],
+        [name, code, id_country, prefix, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
       return ProvinceMapper.entityFromObject(provinceCreated.rows[0]);
@@ -87,7 +88,7 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
         from core.core_province pro
         where pro.pro_id = $1
           and pro.pro_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (province.rows.length === 0) {
         throw CustomError.notFound(
@@ -109,7 +110,7 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
           and pro.id_country = $2
           and pro.pro_id <> $3
           and pro.pro_record_status = $4;`,
-        [name, id_country, id, '0'],
+        [name, id_country, id, RECORD_STATUS.AVAILABLE],
       );
       if (provinceToUpdate.rows.length > 0) {
         throw CustomError.conflict(
@@ -154,7 +155,7 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
         from core.core_province pro
         where pro.pro_id = $1
           and pro.pro_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (result.rows.length === 0) {
         throw CustomError.notFound('No se ha encontrado la provincia');
@@ -173,7 +174,11 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
   async getAll(getAllProvincesDto: GetAllProvincesDto): Promise<Province[]> {
     const { limit, offset, id_country } = getAllProvincesDto;
 
-    const params: (string | number)[] = ['0', limit, offset];
+    const params: (string | number)[] = [
+      RECORD_STATUS.AVAILABLE,
+      limit,
+      offset,
+    ];
     let query = `select pro.pro_id,
            pro.pro_name,
            pro.pro_code,
@@ -223,7 +228,7 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
         from core.core_province pro
         where pro.pro_id = $1
           and pro.pro_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (province.rows.length === 0) {
         throw CustomError.notFound(
@@ -237,7 +242,7 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
         where pro_id = $1
           and pro_record_status = $2
         returning *;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
 
       return ProvinceMapper.entityFromObject(deleted.rows[0]);

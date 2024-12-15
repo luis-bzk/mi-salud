@@ -8,8 +8,9 @@ import {
   GetPaymentMethodDto,
   UpdatePaymentMethodDto,
 } from '../../domain/dtos/payment_method';
-import { PaymentMethod } from '../../domain/entities';
 import { CustomError } from '../../domain/errors';
+import { PaymentMethod } from '../../domain/entities';
+import { RECORD_STATUS } from '../../shared/constants';
 import { PaymentMethodDB } from '../../data/interfaces';
 import { PaymentMethodMapper } from '../mappers/payment_method.mapper';
 
@@ -39,7 +40,7 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
           core.core_payment_method cpm 
           where lower(cpm.pme_name) = $1
           and cpm.pme_record_status = $2;`,
-        [name.toLowerCase(), '0'],
+        [name.toLowerCase(), RECORD_STATUS.AVAILABLE],
       );
       if (paymentMethod.rows.length > 0) {
         throw CustomError.conflict(
@@ -59,7 +60,7 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
           pme_record_status)
         values ($1,$2,$3,$4,$5)
         returning *;`,
-        [image, name, description, new Date(), '0'],
+        [image, name, description, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
       return PaymentMethodMapper.entityFromObject(newPaymentMethod.rows[0]);
@@ -90,7 +91,7 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
           core.core_payment_method cpm 
           where cpm.pme_id = $1
           and cpm.pme_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (paymentMethod.rows.length === 0) {
         throw CustomError.notFound('No existe el método de pago');
@@ -110,7 +111,7 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
           where lower(cpm.pme_name) = $1
           and cpm.pme_id = $2
           and cpm.pme_record_status = $3;`,
-        [name.toLowerCase(), id, '0'],
+        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
       );
       if (otherPaymentMethod.rows.length > 0) {
         throw CustomError.conflict(
@@ -155,7 +156,7 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
           core.core_payment_method cpm 
           where cpm.pme_id = $1
           and cpm.pme_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
 
       if (paymentMethod.rows.length === 0) {
@@ -190,7 +191,7 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
             where cpm.pme_record_status = $1
             order by cpm.pme_name 
             limit $2 offset $3;`,
-        ['0', limit, offset],
+        [RECORD_STATUS.AVAILABLE, limit, offset],
       );
 
       return PaymentMethodMapper.entitiesFromArray(registers.rows);
@@ -222,7 +223,7 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
             core.core_payment_method cpm 
             where cpm.pme_id = $1
             and cpm.pme_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (paymentMethod.rows.length === 0) {
         throw CustomError.notFound('No existe el método de pago');

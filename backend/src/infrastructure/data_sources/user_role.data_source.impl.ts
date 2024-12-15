@@ -8,11 +8,12 @@ import {
   UpdateUserRoleDto,
 } from '../../domain/dtos/user_role';
 import { PostgresDatabase } from '../../data';
-import { UserRole, UserRoleDetail } from '../../domain/entities';
 import { CustomError } from '../../domain/errors';
-import { UserRoleDB, UserRoleDetailDB } from '../../data/interfaces';
+import { RECORD_STATUS } from '../../shared/constants';
 import { UserRoleMapper } from '../mappers/user_role.mapper';
 import { UserRoleDataSource } from '../../domain/data_sources';
+import { UserRole, UserRoleDetail } from '../../domain/entities';
+import { UserRoleDB, UserRoleDetailDB } from '../../data/interfaces';
 
 export class UserRoleDataSourceImpl implements UserRoleDataSource {
   private pool: Pool;
@@ -38,7 +39,7 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
           cur.id_user = $1
           and cur.id_role = $2
           and cur.uro_record_status = $3;`,
-        [id_user, id_role, '0'],
+        [id_user, id_role, RECORD_STATUS.AVAILABLE],
       );
 
       if (existsRegister.rows.length > 0) {
@@ -58,7 +59,7 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
           uro_record_status )
         values ($1,$2,$3,$4)
         returning *;`,
-        [id_user, id_role, new Date(), '0'],
+        [id_user, id_role, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
       return UserRoleMapper.entityFromObject(createdRegister.rows[0]);
@@ -88,7 +89,7 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
         where
           cur.uro_id = $1
           and cur.uro_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (existsRegister.rows.length === 0) {
         throw CustomError.notFound(
@@ -111,7 +112,7 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
           and cur.id_role = $2
           and cur.uro_id <> $3
           and cur.uro_record_status = $4;`,
-        [id_user, id_role, id, '0'],
+        [id_user, id_role, id, RECORD_STATUS.AVAILABLE],
       );
       if (sameRegister.rows.length > 0) {
         throw CustomError.conflict(
@@ -156,7 +157,7 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
         where
           cur.uro_id = $1
           and cur.uro_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (findRegister.rows.length === 0) {
         throw CustomError.notFound(
@@ -191,7 +192,7 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
         order by
           cur.uro_id desc
         limit $2 offset $3;`,
-        ['0', limit, offset],
+        [RECORD_STATUS.AVAILABLE, limit, offset],
       );
 
       return UserRoleMapper.entitiesFromArray(registers.rows);
@@ -240,7 +241,7 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
           where cur.uro_record_status = $1
           order by cu.use_email
           limit $2 offset $3;`,
-        ['0', limit, offset],
+        [RECORD_STATUS.AVAILABLE, limit, offset],
       );
 
       return UserRoleMapper.entitiesFromArrayDetail(registers.rows);
@@ -271,7 +272,7 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
         where
           cur.uro_id = $1
           and cur.uro_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (findRegister.rows.length === 0) {
         throw CustomError.notFound(

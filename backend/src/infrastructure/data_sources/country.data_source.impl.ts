@@ -11,6 +11,7 @@ import { PostgresDatabase } from '../../data';
 import { Country } from '../../domain/entities';
 import { CountryDB } from '../../data/interfaces';
 import { CustomError } from '../../domain/errors';
+import { RECORD_STATUS } from '../../shared/constants';
 import { CountryMapper } from '../mappers/country.mapper';
 import { CountryDataSource } from '../../domain/data_sources';
 
@@ -36,7 +37,7 @@ export class CountryDataSourceImpl implements CountryDataSource {
         from core.core_country cou
         where lower(cou.cou_name) = $1
           and cou.cou_record_status = $2;`,
-        [name.toLowerCase(), '0'],
+        [name.toLowerCase(), RECORD_STATUS.AVAILABLE],
       );
 
       if (result.rows.length > 0) {
@@ -55,7 +56,7 @@ export class CountryDataSourceImpl implements CountryDataSource {
                               cou_record_status)
         values ($1, $2, $3, $4, $5)
         returning *;`,
-        [name, code, prefix, new Date(), '0'],
+        [name, code, prefix, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
       return CountryMapper.entityFromObject(countryCreated.rows[0]);
@@ -83,7 +84,7 @@ export class CountryDataSourceImpl implements CountryDataSource {
         from core.core_country cou
         where cou.cou_id = $1
           and cou.cou_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (result.rows.length === 0) {
         throw CustomError.notFound('No se ha encontrado el país a actualizar');
@@ -101,7 +102,7 @@ export class CountryDataSourceImpl implements CountryDataSource {
         where lower(cou.cou_name) = $1
           and cou.cou_id <> $2
           and cou.cou_record_status = $3;`,
-        [name.toLowerCase(), id, '0'],
+        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
       );
       if (rowSameName.rows.length > 0) {
         throw CustomError.conflict('Ya existe un país con el nombre ingresado');
@@ -116,7 +117,7 @@ export class CountryDataSourceImpl implements CountryDataSource {
         where cou_id = $4
           and cou_record_status = $5
           returning *;`,
-        [name, code, prefix, id, '0'],
+        [name, code, prefix, id, RECORD_STATUS.AVAILABLE],
       );
 
       return CountryMapper.entityFromObject(updatedRow.rows[0]);
@@ -143,7 +144,7 @@ export class CountryDataSourceImpl implements CountryDataSource {
         from core.core_country cou
         where cou.cou_id = $1
           and cou.cou_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
 
       if (result.rows.length === 0) {
@@ -175,7 +176,7 @@ export class CountryDataSourceImpl implements CountryDataSource {
         where cou.cou_record_status = $1
         order by cou.cou_name
         limit $2 offset $3;`,
-        ['0', limit, offset],
+        [RECORD_STATUS.AVAILABLE, limit, offset],
       );
 
       return CountryMapper.entitiesFromArray(result.rows);
@@ -204,7 +205,7 @@ export class CountryDataSourceImpl implements CountryDataSource {
         from core.core_country cou
         where cou.cou_id = $1
           and cou.cou_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (result.rows.length === 0) {
         throw CustomError.notFound('No se ha encontrado el país a eliminar');
@@ -216,7 +217,7 @@ export class CountryDataSourceImpl implements CountryDataSource {
         where cou.cou_id = $1
           and cou.cou_record_status = $2
         returning *;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
 
       return CountryMapper.entityFromObject(deleted.rows[0]);

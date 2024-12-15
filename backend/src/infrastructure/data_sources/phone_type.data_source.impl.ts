@@ -11,6 +11,7 @@ import { PostgresDatabase } from '../../data';
 import { PhoneType } from '../../domain/entities';
 import { CustomError } from '../../domain/errors';
 import { PhoneTypeDB } from '../../data/interfaces';
+import { RECORD_STATUS } from '../../shared/constants';
 import { PhoneTypeMapper } from '../mappers/phone_type.mapper';
 import { PhoneTypeDataSource } from '../../domain/data_sources';
 
@@ -37,7 +38,7 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
         where
           lower(cpt.pty_name) = $1
           and cpt.pty_record_status = $2;`,
-        [name.toLowerCase(), '0'],
+        [name.toLowerCase(), RECORD_STATUS.AVAILABLE],
       );
       if (phoneTypeName.rows.length > 0) {
         throw CustomError.conflict(
@@ -56,7 +57,7 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
           pty_record_status )
         values ($1,$2,$3,$4)
         returning *;`,
-        [name, description, new Date(), '0'],
+        [name, description, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
       return PhoneTypeMapper.entityFromObject(newPhoneType.rows[0]);
@@ -85,7 +86,7 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
         where
           cpt.pty_id = $1
           and cpt.pty_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (phoneType.rows.length === 0) {
         throw CustomError.notFound(
@@ -107,7 +108,7 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
           lower(cpt.pty_name) = $1
           and cpt.pty_id <> $2
           and cpt.pty_record_status = $3;`,
-        [name.toLowerCase(), id, '0'],
+        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
       );
       if (phoneTypeName.rows.length > 0) {
         throw CustomError.conflict(
@@ -154,7 +155,7 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
         where
           cpt.pty_id = $1
           and cpt.pty_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (phoneType.rows.length === 0) {
         throw CustomError.notFound(
@@ -189,7 +190,7 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
         order by
           cpt.pty_name
         limit $2 offset $3;`,
-        ['0', limit, offset],
+        [RECORD_STATUS.AVAILABLE, limit, offset],
       );
 
       return PhoneTypeMapper.entitiesFromArray(registers.rows);
@@ -218,7 +219,7 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
         where
           cpt.pty_id = $1
           and cpt.pty_record_status = $2;`,
-        [id, '0'],
+        [id, RECORD_STATUS.AVAILABLE],
       );
       if (phoneType.rows.length === 0) {
         throw CustomError.notFound(
