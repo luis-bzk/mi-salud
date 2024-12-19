@@ -8,7 +8,6 @@ export class PaymentMethodMapper {
       pme_id,
       pme_name,
       pme_description,
-      pme_image,
       pme_created_date,
       pme_record_status,
     } = obj;
@@ -31,12 +30,6 @@ export class PaymentMethodMapper {
       );
     }
 
-    if (!pme_image) {
-      throw CustomError.conflict(
-        'No se ha recibido la imagen del método de pago de la Base de datos',
-      );
-    }
-
     if (!pme_created_date) {
       throw CustomError.conflict(
         'No se ha recibido la fecha de creación del método de pago de la Base de datos',
@@ -51,7 +44,6 @@ export class PaymentMethodMapper {
 
     return new PaymentMethod(
       pme_id,
-      pme_image,
       pme_name,
       pme_description,
       pme_created_date,

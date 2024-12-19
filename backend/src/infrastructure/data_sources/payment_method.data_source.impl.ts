@@ -24,7 +24,7 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
   async create(
     createPaymentMethodDto: CreatePaymentMethodDto,
   ): Promise<PaymentMethod> {
-    const { name, image, description } = createPaymentMethodDto;
+    const { name, description } = createPaymentMethodDto;
 
     try {
       // search by name
@@ -49,15 +49,14 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
       const newPaymentMethod = await this.pool.query<PaymentMethodDB>(
         `insert into
           core.core_payment_method (
-            pme_image,
             pme_name,
             pme_description,
             pme_created_date,
             pme_record_status
           )
         values
-          ($1, $2, $3, $4, $5) returning *;`,
-        [image, name, description, new Date(), RECORD_STATUS.AVAILABLE],
+          ($1, $2, $3, $4) returning *;`,
+        [name, description, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
       return PaymentMethodMapper.entityFromObject(newPaymentMethod.rows[0]);
@@ -73,7 +72,7 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
   async update(
     updatePaymentMethodDto: UpdatePaymentMethodDto,
   ): Promise<PaymentMethod> {
-    const { id, name, description, image } = updatePaymentMethodDto;
+    const { id, name, description } = updatePaymentMethodDto;
     try {
       // find by id
       const paymentMethod = await this.pool.query<PaymentMethodDB>(
@@ -114,13 +113,12 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
       const updatedPaymentMethod = await this.pool.query<PaymentMethodDB>(
         `update core.core_payment_method
         set
-          pme_image = $1,
-          pme_name = $2,
-          pme_description = $3
+          pme_name = $1,
+          pme_description = $2
         where
-          pme_id = $4
+          pme_id = $3
         returning *;`,
-        [image, name, description, id],
+        [name, description, id],
       );
 
       return PaymentMethodMapper.entityFromObject(updatedPaymentMethod.rows[0]);
@@ -140,7 +138,6 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
       const paymentMethod = await this.pool.query<PaymentMethodDB>(
         `select
           cpm.pme_id,
-          cpm.pme_image,
           cpm.pme_name,
           cpm.pme_description,
           cpm.pme_created_date,
@@ -175,7 +172,6 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
       const registers = await this.pool.query<PaymentMethodDB>(
         `select
           cpm.pme_id,
-          cpm.pme_image,
           cpm.pme_name,
           cpm.pme_description,
           cpm.pme_created_date,

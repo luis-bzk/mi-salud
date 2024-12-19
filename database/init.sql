@@ -1315,7 +1315,6 @@ commit;
 ------------------- PAYMENT METHOD -------------------
 insert into
     core.core_payment_method (
-        pme_image,
         pme_name,
         pme_description,
         pme_created_date,
@@ -1323,7 +1322,6 @@ insert into
     )
 values
     (
-        'https://res.cloudinary.com/luis-berrezueta/image/upload/v1728676457/mipenw7vh2hdszklyymg.jpg',
         'efectivo',
         'pago en efectivo',
         current_timestamp,
@@ -1332,7 +1330,6 @@ values
 
 insert into
     core.core_payment_method (
-        pme_image,
         pme_name,
         pme_description,
         pme_created_date,
@@ -1340,7 +1337,6 @@ insert into
     )
 values
     (
-        'https://res.cloudinary.com/luis-berrezueta/image/upload/v1728676457/mipenw7vh2hdszklyymg.jpg',
         'tarjeta',
         'pago con tarjeta de débito o crédito',
         current_timestamp,
@@ -1349,7 +1345,6 @@ values
 
 insert into
     core.core_payment_method (
-        pme_image,
         pme_name,
         pme_description,
         pme_created_date,
@@ -1357,7 +1352,6 @@ insert into
     )
 values
     (
-        'https://res.cloudinary.com/luis-berrezueta/image/upload/v1728676457/mipenw7vh2hdszklyymg.jpg',
         'transferencia',
         'pago mediante transferencia interbancaria',
         current_timestamp,

@@ -101,7 +101,6 @@ create table
 create table
   core.core_payment_method (
     pme_id serial primary key,
-    pme_image varchar(1000) not null,
     pme_name varchar(100) not null,
     pme_description varchar(300) not null,
     pme_created_date timestamp default current_timestamp,

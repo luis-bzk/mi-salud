@@ -1,10 +1,8 @@
 export class CreatePaymentMethodDto {
-  public image: string;
   public name: string;
   public description: string;
 
-  constructor(image: string, name: string, description: string) {
-    this.image = image;
+  constructor(name: string, description: string) {
     this.name = name;
     this.description = description;
   }
@@ -12,11 +10,7 @@ export class CreatePaymentMethodDto {
   static create(body: {
     [key: string]: any;
   }): [string?, CreatePaymentMethodDto?] {
-    const { image, name, description } = body;
-
-    if (!image) return ['La imagen es requerida'];
-    if (image.length > 1000)
-      return ['La imagen no puede tener mas de 1000 caracteres'];
+    const { name, description } = body;
 
     if (!name) return ['El nombre es requerido'];
     if (name.length > 100)
@@ -28,11 +22,7 @@ export class CreatePaymentMethodDto {
 
     return [
       undefined,
-      new CreatePaymentMethodDto(
-        image,
-        name.toLowerCase(),
-        description.toLowerCase(),
-      ),
+      new CreatePaymentMethodDto(name.toLowerCase(), description.toLowerCase()),
     ];
   }
 }
