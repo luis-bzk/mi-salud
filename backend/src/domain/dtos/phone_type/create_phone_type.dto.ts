@@ -20,6 +20,9 @@ export class CreatePhoneTypeDto {
     if (description.length > 100)
       return ['La descripción no puede tener mas de 100 caracteres'];
 
-    return [undefined, new CreatePhoneTypeDto(name, description)];
+    return [
+      undefined,
+      new CreatePhoneTypeDto(name.toLowerCase(), description.toLowerCase()),
+    ];
   }
 }

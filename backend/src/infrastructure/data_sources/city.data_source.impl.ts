@@ -28,17 +28,16 @@ export class CityDataSourceImpl implements CityDataSource {
     try {
       // search city with the same name
       const cityName = await this.pool.query<CityDB>(
-        `select cit.cit_id,
-                cit.cit_name,
-                cit.id_province,
-                cit.id_country,
-                cit.cit_created_date,
-                cit.cit_record_status
-        from core.core_city cit
-        where lower(cit.cit_name) = $1
+        `select
+          cit.cit_id,
+          cit.cit_record_status
+        from
+          core.core_city cit
+        where
+          lower(cit.cit_name) = $1
           and cit.id_province = $2
           and cit.cit_record_status = $3;`,
-        [name.toLowerCase(), id_province, RECORD_STATUS.AVAILABLE],
+        [name, id_province, RECORD_STATUS.AVAILABLE],
       );
       if (cityName.rows.length > 0) {
         throw CustomError.conflict('Ya existe una ciudad con el mismo nombre');
@@ -46,14 +45,16 @@ export class CityDataSourceImpl implements CityDataSource {
 
       // create city
       const cityCreated = await this.pool.query<CityDB>(
-        `insert into core.core_city
-        (cit_name,
-          id_province,
-          id_country,
-          cit_created_date,
-          cit_record_status)
-        values ($1, $2, $3, $4)
-        returning *;`,
+        `insert into
+          core.core_city (
+            cit_name,
+            id_province,
+            id_country,
+            cit_created_date,
+            cit_record_status
+          )
+        values
+          ($1, $2, $3, $4) returning *;`,
         [name, id_province, id_country, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
@@ -73,14 +74,13 @@ export class CityDataSourceImpl implements CityDataSource {
     try {
       // search city
       const city = await this.pool.query<CityDB>(
-        `select cit.cit_id,
-                cit.cit_name,
-                cit.id_province,
-                cit.id_country,
-                cit.cit_created_date,
-                cit.cit_record_status
-        from core.core_city cit
-        where cit.cit_id = $1
+        `select
+          cit.cit_id,
+          cit.cit_record_status
+        from
+          core.core_city cit
+        where
+          cit.cit_id = $1
           and cit.cit_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
@@ -92,18 +92,18 @@ export class CityDataSourceImpl implements CityDataSource {
 
       // search city with the same name
       const cityName = await this.pool.query<CityDB>(
-        `select cit.cit_id,
-                cit.cit_name,
-                cit.id_province,
-                cit.id_country,
-                cit.cit_created_date,
-                cit.cit_record_status
-        from core.core_city cit
-        where lower(cit.cit_name) = $1
+        `select
+          cit.cit_id,
+          cit.cit_name,
+          cit.cit_record_status
+        from
+          core.core_city cit
+        where
+          lower(cit.cit_name) = $1
           and cit.id_province = $2
           and cit.cit_id <> $3
           and cit.cit_record_status = $4;`,
-        [name.toLowerCase(), id_province, id, RECORD_STATUS.AVAILABLE],
+        [name, id_province, id, RECORD_STATUS.AVAILABLE],
       );
       if (cityName.rows.length > 0) {
         throw CustomError.conflict(
@@ -114,11 +114,12 @@ export class CityDataSourceImpl implements CityDataSource {
       // update city
       const updated = await this.pool.query<CityDB>(
         `update core.core_city
-        set cit_name    = $1,
-            id_province = $2,
-            id_country = $3
-        where cit_id = $4
-        returning *;`,
+        set
+          cit_name = $1,
+          id_province = $2,
+          id_country = $3
+        where
+          cit_id = $4 returning *;`,
         [name, id_province, id_country, id],
       );
 
@@ -137,14 +138,17 @@ export class CityDataSourceImpl implements CityDataSource {
 
     try {
       const result = await this.pool.query<CityDB>(
-        `select cit.cit_id,
-                cit.cit_name,
-                cit.id_province,
-                cit.id_country,
-                cit.cit_created_date,
-                cit.cit_record_status
-        from core.core_city cit
-        where cit.cit_id = $1
+        `select
+          cit.cit_id,
+          cit.cit_name,
+          cit.id_province,
+          cit.id_country,
+          cit.cit_created_date,
+          cit.cit_record_status
+        from
+          core.core_city cit
+        where
+          cit.cit_id = $1
           and cit.cit_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
@@ -212,14 +216,17 @@ export class CityDataSourceImpl implements CityDataSource {
 
     try {
       const result = await this.pool.query<CityDB>(
-        `select cit.cit_id,
-              cit.cit_name,
-              cit.id_province,
-              cit.id_country,
-              cit.cit_created_date,
-              cit.cit_record_status
-        from core.core_city cit
-        where cit.cit_id = $1
+        `select
+          cit.cit_id,
+          cit.cit_name,
+          cit.id_province,
+          cit.id_country,
+          cit.cit_created_date,
+          cit.cit_record_status
+        from
+          core.core_city cit
+        where
+          cit.cit_id = $1
           and cit.cit_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
@@ -228,11 +235,10 @@ export class CityDataSourceImpl implements CityDataSource {
       }
 
       const deleted = await this.pool.query<CityDB>(
-        `delete
-        from core.core_city
-        where cit_id = $1
-          and cit_record_status = $2
-        returning *;`,
+        `delete from core.core_city
+        where
+          cit_id = $1
+          and cit_record_status = $2 returning *;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
 

@@ -23,6 +23,9 @@ export class CreateCityDto {
     if (!id_country) return ['El ID del país es requerido'];
     if (isNaN(id_country)) return ['El ID del país no es válido'];
 
-    return [undefined, new CreateCityDto(name, id_province, id_country)];
+    return [
+      undefined,
+      new CreateCityDto(name.toLowerCase(), id_province, id_country),
+    ];
   }
 }

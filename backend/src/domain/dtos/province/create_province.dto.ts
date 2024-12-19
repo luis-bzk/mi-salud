@@ -30,6 +30,14 @@ export class CreateProvinceDto {
     if (!id_country) return ['El ID del país es requerido'];
     if (isNaN(id_country)) return ['El ID del país no es válido'];
 
-    return [undefined, new CreateProvinceDto(name, code, prefix, id_country)];
+    return [
+      undefined,
+      new CreateProvinceDto(
+        name.toLowerCase(),
+        code.toLowerCase(),
+        prefix.toLowerCase(),
+        id_country,
+      ),
+    ];
   }
 }

@@ -50,9 +50,9 @@ export class UpdateIdentTypeDto {
       undefined,
       new UpdateIdentTypeDto(
         parsedId,
-        name,
-        description,
-        abbreviation,
+        name.toLowerCase(),
+        description.toLowerCase(),
+        abbreviation.toLowerCase(),
         id_country,
       ),
     ];

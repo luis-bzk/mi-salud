@@ -29,9 +29,6 @@ export class RoleDataSourceImpl implements RoleDataSource {
       const roleName = await this.pool.query<RoleDB>(
         `select
           cr.rol_id,
-          cr.rol_name,
-          cr.rol_description,
-          cr.rol_created_date,
           cr.rol_record_status
         from
           core.core_role cr
@@ -45,15 +42,17 @@ export class RoleDataSourceImpl implements RoleDataSource {
       }
 
       const newRole = await this.pool.query<RoleDB>(
-        `insert
-          into
+        `insert into
           core.core_role (
-          rol_name,
-          rol_description,
-          rol_created_date,
-          rol_record_status)
-        values ($1,$2,$3,$4) 
-        returning *;`,
+            rol_name,
+            rol_description,
+            rol_created_date,
+            rol_record_status
+          )
+        values
+          ($1, $2, $3, $4)
+        returning
+          *;`,
         [name, description, new Date(), RECORD_STATUS.AVAILABLE],
       );
       return RoleMapper.entityFromObject(newRole.rows[0]);
@@ -74,9 +73,6 @@ export class RoleDataSourceImpl implements RoleDataSource {
       const roleFound = await this.pool.query<RoleDB>(
         `select
           cr.rol_id,
-          cr.rol_name,
-          cr.rol_description,
-          cr.rol_created_date,
           cr.rol_record_status
         from
           core.core_role cr
@@ -93,9 +89,6 @@ export class RoleDataSourceImpl implements RoleDataSource {
       const roleName = await this.pool.query<RoleDB>(
         `select
           cr.rol_id,
-          cr.rol_name,
-          cr.rol_description,
-          cr.rol_created_date,
           cr.rol_record_status
         from
           core.core_role cr
@@ -103,7 +96,7 @@ export class RoleDataSourceImpl implements RoleDataSource {
           lower(cr.rol_name) = $1
           and cr.rol_id <> $2
           and cr.rol_record_status = $3;`,
-        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
+        [name, id, RECORD_STATUS.AVAILABLE],
       );
       if (roleName.rows.length > 0) {
         throw CustomError.conflict(
@@ -113,14 +106,14 @@ export class RoleDataSourceImpl implements RoleDataSource {
 
       // update
       const updated = await this.pool.query<RoleDB>(
-        `update
-          core.core_role
+        `update core.core_role
         set
           rol_name = $1,
           rol_description = $2
         where
           rol_id = $3
-        returning *;`,
+        returning
+          *;`,
         [name, description, id],
       );
 
@@ -141,16 +134,16 @@ export class RoleDataSourceImpl implements RoleDataSource {
       // exists
       const roleFound = await this.pool.query<RoleDB>(
         `select
-            cr.rol_id,
-            cr.rol_name,
-            cr.rol_description,
-            cr.rol_created_date,
-            cr.rol_record_status
-          from
-            core.core_role cr
-          where
-            cr.rol_id = $1
-            and cr.rol_record_status = $2;`,
+          cr.rol_id,
+          cr.rol_name,
+          cr.rol_description,
+          cr.rol_created_date,
+          cr.rol_record_status
+        from
+          core.core_role cr
+        where
+          cr.rol_id = $1
+          and cr.rol_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
       if (roleFound.rows.length === 0) {
@@ -205,16 +198,13 @@ export class RoleDataSourceImpl implements RoleDataSource {
       // exists
       const roleFound = await this.pool.query<RoleDB>(
         `select
-            cr.rol_id,
-            cr.rol_name,
-            cr.rol_description,
-            cr.rol_created_date,
-            cr.rol_record_status
-          from
-            core.core_role cr
-          where
-            cr.rol_id = $1
-            and cr.rol_record_status = $2;`,
+          cr.rol_id,
+          cr.rol_record_status
+        from
+          core.core_role cr
+        where
+          cr.rol_id = $1
+          and cr.rol_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
       if (roleFound.rows.length === 0) {
@@ -222,12 +212,11 @@ export class RoleDataSourceImpl implements RoleDataSource {
       }
 
       const deletedRole = await this.pool.query(
-        `delete
-        from
-          core.core_role
+        `delete from core.core_role
         where
           rol_id = $1
-        returning *;`,
+        returning
+          *;`,
         [id],
       );
 

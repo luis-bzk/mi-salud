@@ -31,7 +31,11 @@ export class UpdateNotificationTypeDto {
 
     return [
       undefined,
-      new UpdateNotificationTypeDto(parsedId, name, description),
+      new UpdateNotificationTypeDto(
+        parsedId,
+        name.toLowerCase(),
+        description.toLowerCase(),
+      ),
     ];
   }
 }

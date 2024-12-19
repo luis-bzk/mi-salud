@@ -28,10 +28,7 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
       // search if user role exists
       const existsRegister = await this.pool.query<UserRoleDB>(
         `select
-          cur.uro_id ,
-          cur.id_user ,
-          cur.id_role ,
-          cur.uro_created_date,
+          cur.uro_id,
           cur.uro_record_status
         from
           core.core_user_role cur
@@ -50,15 +47,17 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
 
       // create
       const createdRegister = await this.pool.query<UserRoleDB>(
-        `insert
-          into
+        `insert into
           core.core_user_role (
-          id_user,
-          id_role,
-          uro_created_date,
-          uro_record_status )
-        values ($1,$2,$3,$4)
-        returning *;`,
+            id_user,
+            id_role,
+            uro_created_date,
+            uro_record_status
+          )
+        values
+          ($1, $2, $3, $4)
+        returning
+          *;`,
         [id_user, id_role, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
@@ -79,10 +78,7 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
       // search if exists
       const existsRegister = await this.pool.query<UserRoleDB>(
         `select
-          cur.uro_id ,
-          cur.id_user ,
-          cur.id_role ,
-          cur.uro_created_date,
+          cur.uro_id,
           cur.uro_record_status
         from
           core.core_user_role cur
@@ -100,10 +96,7 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
       // search the same with other id
       const sameRegister = await this.pool.query<UserRoleDB>(
         `select
-          cur.uro_id ,
-          cur.id_user ,
-          cur.id_role ,
-          cur.uro_created_date,
+          cur.uro_id,
           cur.uro_record_status
         from
           core.core_user_role cur
@@ -122,14 +115,14 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
 
       // update
       const updated = await this.pool.query<UserRoleDB>(
-        `update
-          core.core_user_role
+        `update core.core_user_role
         set
           id_user = $1,
           id_role = $2
         where
           uro_id = $3
-        returning *;`,
+        returning
+          *;`,
         [id_user, id_role, id],
       );
       return UserRoleMapper.entityFromObject(updated.rows[0]);
@@ -147,9 +140,9 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
     try {
       const findRegister = await this.pool.query<UserRoleDB>(
         `select
-          cur.uro_id ,
-          cur.id_user ,
-          cur.id_role ,
+          cur.uro_id,
+          cur.id_user,
+          cur.id_role,
           cur.uro_created_date,
           cur.uro_record_status
         from
@@ -263,9 +256,6 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
       const findRegister = await this.pool.query<UserRoleDB>(
         `select
           cur.uro_id ,
-          cur.id_user ,
-          cur.id_role ,
-          cur.uro_created_date,
           cur.uro_record_status
         from
           core.core_user_role cur
@@ -282,12 +272,11 @@ export class UserRoleDataSourceImpl implements UserRoleDataSource {
 
       // delete
       const deleted = await this.pool.query(
-        `delete
-        from
-          core.core_user_role
+        `delete from core.core_user_role
         where
           uro_id = $1
-        returning *;`,
+        returning
+          *;`,
         [id],
       );
 

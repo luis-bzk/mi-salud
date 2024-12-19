@@ -28,6 +28,13 @@ export class CreateUserDto {
     if (!Validators.email.test(email))
       return ['El email del usuario no es válido'];
 
-    return [undefined, new CreateUserDto(name, last_name, email)];
+    return [
+      undefined,
+      new CreateUserDto(
+        name.toLowerCase(),
+        last_name.toLowerCase(),
+        email.toLowerCase(),
+      ),
+    ];
   }
 }

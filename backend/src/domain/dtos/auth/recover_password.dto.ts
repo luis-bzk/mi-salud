@@ -16,6 +16,6 @@ export class RecoverPasswordDto {
     if (!Validators.email.test(email))
       return ['El email ingresado no es válido'];
 
-    return [undefined, new RecoverPasswordDto(email)];
+    return [undefined, new RecoverPasswordDto(email.toLowerCase())];
   }
 }

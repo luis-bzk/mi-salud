@@ -38,6 +38,14 @@ export class SignupUserDto {
     if (!Validators.passwordSpecialChars.test(password))
       return ['La contraseña debe tener caracteres especiales'];
 
-    return [undefined, new SignupUserDto(name, last_name, email, password)];
+    return [
+      undefined,
+      new SignupUserDto(
+        name.toLowerCase(),
+        last_name.toLowerCase(),
+        email.toLowerCase(),
+        password,
+      ),
+    ];
   }
 }

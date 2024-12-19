@@ -38,6 +38,14 @@ export class UpdateUserDto {
     if (!Validators.email.test(email))
       return ['El email del usuario no es válido'];
 
-    return [undefined, new UpdateUserDto(parsedId, name, last_name, email)];
+    return [
+      undefined,
+      new UpdateUserDto(
+        parsedId,
+        name.toLowerCase(),
+        last_name.toLowerCase(),
+        email.toLowerCase(),
+      ),
+    ];
   }
 }

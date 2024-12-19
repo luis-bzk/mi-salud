@@ -28,16 +28,15 @@ export class CountryDataSourceImpl implements CountryDataSource {
     try {
       // country with name
       const result = await this.pool.query<CountryDB>(
-        `select cou_id,
-                cou_name,
-                cou_code,
-                cou_prefix,
-                cou_created_date,
-                cou_record_status
-        from core.core_country cou
-        where lower(cou.cou_name) = $1
+        `select
+          cou_id,
+          cou_record_status
+        from
+          core.core_country cou
+        where
+          lower(cou.cou_name) = $1
           and cou.cou_record_status = $2;`,
-        [name.toLowerCase(), RECORD_STATUS.AVAILABLE],
+        [name, RECORD_STATUS.AVAILABLE],
       );
 
       if (result.rows.length > 0) {
@@ -48,14 +47,16 @@ export class CountryDataSourceImpl implements CountryDataSource {
 
       // create country
       const countryCreated = await this.pool.query<CountryDB>(
-        `insert into core.core_country
-                             (cou_name,
-                              cou_code,
-                              cou_prefix,
-                              cou_created_date,
-                              cou_record_status)
-        values ($1, $2, $3, $4, $5)
-        returning *;`,
+        `insert into
+        core.core_country (
+          cou_name,
+          cou_code,
+          cou_prefix,
+          cou_created_date,
+          cou_record_status
+        )
+      values
+        ($1, $2, $3, $4, $5) returning *;`,
         [name, code, prefix, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
@@ -75,14 +76,13 @@ export class CountryDataSourceImpl implements CountryDataSource {
     try {
       // verify existence
       const result = await this.pool.query<CountryDB>(
-        `select cou_id,
-                cou_name,
-                cou_code,
-                cou_prefix,
-                cou_created_date,
-                cou_record_status
-        from core.core_country cou
-        where cou.cou_id = $1
+        `select
+          cou_id,
+          cou_record_status
+        from
+          core.core_country cou
+        where
+          cou.cou_id = $1
           and cou.cou_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
@@ -92,17 +92,16 @@ export class CountryDataSourceImpl implements CountryDataSource {
 
       // verify if there's a country with the same name
       const rowSameName = await this.pool.query<CountryDB>(
-        `select cou_id,
-                cou_name,
-                cou_code,
-                cou_prefix,
-                cou_created_date,
-                cou_record_status
-        from core.core_country cou
-        where lower(cou.cou_name) = $1
+        `select
+          cou_id,
+          cou_record_status
+        from
+          core.core_country cou
+        where
+          lower(cou.cou_name) = $1
           and cou.cou_id <> $2
           and cou.cou_record_status = $3;`,
-        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
+        [name, id, RECORD_STATUS.AVAILABLE],
       );
       if (rowSameName.rows.length > 0) {
         throw CustomError.conflict('Ya existe un país con el nombre ingresado');
@@ -111,12 +110,13 @@ export class CountryDataSourceImpl implements CountryDataSource {
       // update
       const updatedRow = await this.pool.query<CountryDB>(
         `update core.core_country
-        set cou_name   = $1,
-            cou_code   = $2,
-            cou_prefix = $3
-        where cou_id = $4
-          and cou_record_status = $5
-          returning *;`,
+        set
+          cou_name = $1,
+          cou_code = $2,
+          cou_prefix = $3
+        where
+          cou_id = $4
+          and cou_record_status = $5 returning *;`,
         [name, code, prefix, id, RECORD_STATUS.AVAILABLE],
       );
 
@@ -135,14 +135,17 @@ export class CountryDataSourceImpl implements CountryDataSource {
 
     try {
       const result = await this.pool.query<CountryDB>(
-        `select cou_id,
-                cou_name,
-                cou_code,
-                cou_prefix,
-                cou_created_date,
-                cou_record_status
-        from core.core_country cou
-        where cou.cou_id = $1
+        `select
+          cou_id,
+          cou_name,
+          cou_code,
+          cou_prefix,
+          cou_created_date,
+          cou_record_status
+        from
+          core.core_country cou
+        where
+          cou.cou_id = $1
           and cou.cou_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
@@ -166,15 +169,19 @@ export class CountryDataSourceImpl implements CountryDataSource {
 
     try {
       const result = await this.pool.query<CountryDB>(
-        `select cou_id,
-                cou_name,
-                cou_code,
-                cou_prefix,
-                cou_created_date,
-                cou_record_status
-        from core.core_country cou
-        where cou.cou_record_status = $1
-        order by cou.cou_name
+        `select
+          cou_id,
+          cou_name,
+          cou_code,
+          cou_prefix,
+          cou_created_date,
+          cou_record_status
+        from
+          core.core_country cou
+        where
+          cou.cou_record_status = $1
+        order by
+          cou.cou_name
         limit $2 offset $3;`,
         [RECORD_STATUS.AVAILABLE, limit, offset],
       );
@@ -196,14 +203,13 @@ export class CountryDataSourceImpl implements CountryDataSource {
 
     try {
       const result = await this.pool.query<CountryDB>(
-        `select cou_id,
-                cou_name,
-                cou_code,
-                cou_prefix,
-                cou_created_date,
-                cou_record_status
-        from core.core_country cou
-        where cou.cou_id = $1
+        `select
+          cou_id,
+          cou_record_status
+        from
+          core.core_country cou
+        where
+          cou.cou_id = $1
           and cou.cou_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
@@ -212,11 +218,10 @@ export class CountryDataSourceImpl implements CountryDataSource {
       }
 
       const deleted = await this.pool.query<CountryDB>(
-        `delete
-        from core.core_country cou
-        where cou.cou_id = $1
-          and cou.cou_record_status = $2
-        returning *;`,
+        `delete from core.core_country cou
+        where
+          cou.cou_id = $1
+          and cou.cou_record_status = $2 returning *;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
 

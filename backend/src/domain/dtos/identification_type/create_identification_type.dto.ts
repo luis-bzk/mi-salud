@@ -36,7 +36,12 @@ export class CreateIdentTypeDto {
 
     return [
       undefined,
-      new CreateIdentTypeDto(name, description, abbreviation, id_country),
+      new CreateIdentTypeDto(
+        name.toLowerCase(),
+        description.toLowerCase(),
+        abbreviation.toLowerCase(),
+        id_country,
+      ),
     ];
   }
 }

@@ -40,18 +40,13 @@ export class IdentificationTypeDataSourceImpl
       const identTypeName = await this.pool.query<IdentificationTypeDB>(
         `select
           cit.ity_id,
-          cit.ity_name,
-          cit.ity_description,
-          cit.ity_abbreviation,
-          cit.id_country,
-          cit.ity_created_date,
           cit.ity_record_status
         from
           core.core_identification_type cit
         where
           lower(cit.ity_name) = $1
           and cit.ity_record_status = $2;`,
-        [name.toLowerCase(), RECORD_STATUS.AVAILABLE],
+        [name, RECORD_STATUS.AVAILABLE],
       );
 
       if (identTypeName.rows.length > 0) {
@@ -62,17 +57,17 @@ export class IdentificationTypeDataSourceImpl
 
       // create
       const identTypeCreated = await this.pool.query<IdentificationTypeDB>(
-        `insert
-          into
+        `insert into
           core.core_identification_type (
-          ity_name,
-          ity_description,
-          ity_abbreviation,
-          id_country,
-          ity_created_date,
-          ity_record_status)
-        values ($1,$2,$3,$4,$5,$6)
-          returning *;`,
+            ity_name,
+            ity_description,
+            ity_abbreviation,
+            id_country,
+            ity_created_date,
+            ity_record_status
+          )
+        values
+          ($1, $2, $3, $4, $5, $6) returning *;`,
         [
           name,
           description,
@@ -106,11 +101,6 @@ export class IdentificationTypeDataSourceImpl
       const identType = await this.pool.query<IdentificationTypeDB>(
         `select
           cit.ity_id,
-          cit.ity_name,
-          cit.ity_description,
-          cit.ity_abbreviation,
-          cit.id_country,
-          cit.ity_created_date,
           cit.ity_record_status
         from
           core.core_identification_type cit
@@ -129,11 +119,6 @@ export class IdentificationTypeDataSourceImpl
       const identTypeName = await this.pool.query<IdentificationTypeDB>(
         `select
           cit.ity_id,
-          cit.ity_name,
-          cit.ity_description,
-          cit.ity_abbreviation,
-          cit.id_country,
-          cit.ity_created_date,
           cit.ity_record_status
         from
           core.core_identification_type cit
@@ -141,7 +126,7 @@ export class IdentificationTypeDataSourceImpl
           lower(cit.ity_name) = $1
           and cit.ity_id <> $2
           and cit.ity_record_status = $3;`,
-        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
+        [name, id, RECORD_STATUS.AVAILABLE],
       );
       if (identTypeName.rows.length > 0) {
         throw CustomError.conflict(
@@ -151,16 +136,14 @@ export class IdentificationTypeDataSourceImpl
 
       // update
       const updatedRegister = await this.pool.query<IdentificationTypeDB>(
-        `update
-          core.core_identification_type
+        `update core.core_identification_type
         set
           ity_name = $1,
           ity_description = $2,
           ity_abbreviation = $3,
           id_country = $4
         where
-          ity_id = $5
-        returning *;`,
+          ity_id = $5 returning *;`,
         [name, description, abbreviation, id_country, id],
       );
 
@@ -266,8 +249,7 @@ export class IdentificationTypeDataSourceImpl
           cc.cou_record_status
         from
           core.core_identification_type cit
-        join core.core_country cc on
-          cit.id_country = cc.cou_id
+          join core.core_country cc on cit.id_country = cc.cou_id
         where
           cit.ity_record_status = $1
         order by
@@ -295,11 +277,6 @@ export class IdentificationTypeDataSourceImpl
       const identType = await this.pool.query<IdentificationTypeDB>(
         `select
           cit.ity_id,
-          cit.ity_name,
-          cit.ity_description,
-          cit.ity_abbreviation,
-          cit.id_country,
-          cit.ity_created_date,
           cit.ity_record_status
         from
           core.core_identification_type cit
@@ -316,12 +293,9 @@ export class IdentificationTypeDataSourceImpl
 
       // delete
       const deletedRegister = await this.pool.query<IdentificationTypeDB>(
-        `delete
-        from
-          core.core_identification_type
+        `delete from core.core_identification_type
         where
-          ity_id = $1
-        returning *;`,
+          ity_id = $1 returning *;`,
         [id],
       );
       return IdentificationTypeMapper.entityFromObject(deletedRegister.rows[0]);

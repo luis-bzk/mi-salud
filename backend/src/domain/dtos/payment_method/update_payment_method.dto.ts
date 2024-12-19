@@ -37,7 +37,12 @@ export class UpdatePaymentMethodDto {
 
     return [
       undefined,
-      new UpdatePaymentMethodDto(parsedId, image, name, description),
+      new UpdatePaymentMethodDto(
+        parsedId,
+        image,
+        name.toLowerCase(),
+        description.toLowerCase(),
+      ),
     ];
   }
 }

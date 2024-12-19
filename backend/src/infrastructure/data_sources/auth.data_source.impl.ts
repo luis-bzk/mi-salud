@@ -37,16 +37,19 @@ export class AuthDataSourceImpl implements AuthDataSource {
     const { email, password } = loginUserDto;
     try {
       const response = await this.pool.query<UserDB>(
-        `select use_id,
-                use_name,
-                use_last_name,
-                use_email,
-                use_password,
-                use_token,
-                use_created_date,
-                use_record_status
-        from core.core_user use
-        where use.use_email = $1
+        `select
+          use_id,
+          use_name,
+          use_last_name,
+          use_email,
+          use_password,
+          use_token,
+          use_created_date,
+          use_record_status
+        from
+          core.core_user use
+        where
+          use.use_email = $1
           and use.use_record_status = $2;`,
         [email, RECORD_STATUS.AVAILABLE],
       );
@@ -83,7 +86,16 @@ export class AuthDataSourceImpl implements AuthDataSource {
     try {
       // validate email
       const response = await this.pool.query<UserDB>(
-        'select * from core.core_user use where use.use_email = $1 and use.use_record_status = $2',
+        `select
+          use_id,
+          use_email,
+          use_token,
+          use_record_status
+        from
+          core.core_user use
+        where
+          use.use_email = $1
+          and use.use_record_status = $2`,
         [email, RECORD_STATUS.AVAILABLE],
       );
 
@@ -95,15 +107,18 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
       // create user
       const userCreated = await this.pool.query<UserDB>(
-        `insert into core.core_user (use_name,
-                            use_last_name,
-                            use_email,
-                            use_password,
-                            use_token,
-                            use_created_date,
-                            use_record_status)
-                          values ($1, $2, $3, $4, $5, $6, $7)
-                          returning *;`,
+        `insert into
+          core.core_user (
+            use_name,
+            use_last_name,
+            use_email,
+            use_password,
+            use_token,
+            use_created_date,
+            use_record_status
+          )
+        values
+          ($1, $2, $3, $4, $5, $6, $7) returning *;`,
         [
           name,
           last_name,
@@ -132,16 +147,14 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
     try {
       const user_found = await this.pool.query<UserDB>(
-        `select use_id,
-                use_name,
-                use_last_name,
-                use_email,
-                use_password,
-                use_token,
-                use_created_date,
-                use_record_status
-        from core.core_user use
-        where use.use_email = $1
+        `select
+          use_id,
+          use_email,
+          use_record_status
+        from
+          core.core_user use
+        where
+          use.use_email = $1
           and use.use_record_status = $2;`,
         [email, RECORD_STATUS.AVAILABLE],
       );
@@ -153,10 +166,11 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
       const update_user = await this.pool.query<UserDB>(
         `update core.core_user
-      set use_token = $1
-      where use_id = $2
-      and use_record_status = $3
-      returning *;`,
+        set
+          use_token = $1
+        where
+          use_id = $2
+          and use_record_status = $3 returning *;`,
         [
           GeneratorValues.tokenGenerator(),
           user_found.rows[0].use_id,
@@ -181,16 +195,13 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
     try {
       const user_found = await this.pool.query<UserDB>(
-        `select use_id,
-                use_name,
-                use_last_name,
-                use_email,
-                use_password,
-                use_token,
-                use_created_date,
-                use_record_status
-        from core.core_user use
-        where use.use_token = $1
+        `select
+          use_id,
+          use_record_status
+        from
+          core.core_user use
+        where
+          use.use_token = $1
           and use.use_record_status = $2;`,
         [token, RECORD_STATUS.AVAILABLE],
       );
@@ -203,11 +214,12 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
       const updated_user = await this.pool.query<UserDB>(
         `update core.core_user
-        set use_token    = $1,
-            use_password = $2
-        where use_token = $3
-          and use_record_status = $4
-        returning *;`,
+        set
+          use_token = $1,
+          use_password = $2
+        where
+          use_token = $3
+          and use_record_status = $4 returning *;`,
         [null, this.hashPassword(password), token, RECORD_STATUS.AVAILABLE],
       );
 
@@ -228,16 +240,19 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
     try {
       const user_found = await this.pool.query<UserDB>(
-        `select use_id,
-                use_name,
-                use_last_name,
-                use_email,
-                use_password,
-                use_token,
-                use_created_date,
-                use_record_status
-        from core.core_user use
-        where use.use_token = $1
+        `select
+          use_id,
+          use_name,
+          use_last_name,
+          use_email,
+          use_password,
+          use_token,
+          use_created_date,
+          use_record_status
+        from
+          core.core_user use
+        where
+          use.use_token = $1
           and use.use_record_status = $2;`,
         [token, RECORD_STATUS.AVAILABLE],
       );
@@ -265,10 +280,14 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
     try {
       const user_found = await this.pool.query<UserDB>(
-        `select *
-      from core.core_user use
-      where use.use_token = $1
-        and use.use_record_status = $2;`,
+        `select
+          use.use_id,
+          use.use_record_status
+        from
+          core.core_user use
+        where
+          use.use_token = $1
+          and use.use_record_status = $2;`,
         [token, RECORD_STATUS.AVAILABLE],
       );
 
@@ -280,10 +299,11 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
       const updated_user = await this.pool.query<UserDB>(
         `update core.core_user
-      set use_token    = $1
-      where use_token = $2
-        and use_record_status = $3
-      returning *;`,
+        set
+          use_token = $1
+        where
+          use_token = $2
+          and use_record_status = $3 returning *;`,
         [null, token, RECORD_STATUS.AVAILABLE],
       );
 

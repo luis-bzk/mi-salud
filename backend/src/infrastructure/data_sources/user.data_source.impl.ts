@@ -36,19 +36,13 @@ export class UserDataSourceImpl implements UserDataSource {
       const userEmail = await this.pool.query<UserDB>(
         `select
           use.use_id,
-          use.use_name,
-          use.use_last_name,
-          use.use_email,
-          use.use_password,
-          use.use_token,
-          use.use_created_date,
           use.use_record_status
         from
           core.core_user use
         where
           use.use_email = $1
           and use.use_record_status = $2;`,
-        [email.toLowerCase(), RECORD_STATUS.AVAILABLE],
+        [email, RECORD_STATUS.AVAILABLE],
       );
       if (userEmail.rows.length > 0) {
         throw CustomError.conflict(
@@ -59,14 +53,24 @@ export class UserDataSourceImpl implements UserDataSource {
       const generatedPassword = GeneratorValues.passwordGenerator();
       // create user
       const createdUser = await this.pool.query<UserDB>(
-        `insert into core.core_user
-        (use_name, use_last_name, use_email, use_password, use_token,use_created_date, use_record_status)
-        values ($1, $2, $3, $4, $5, $6, $7)
-        returning *;`,
+        `insert into
+          core.core_user (
+            use_name,
+            use_last_name,
+            use_email,
+            use_password,
+            use_token,
+            use_created_date,
+            use_record_status
+          )
+        values
+          ($1, $2, $3, $4, $5, $6, $7)
+        returning
+          *;`,
         [
-          name.toLowerCase(),
-          last_name.toLowerCase(),
-          email.toLowerCase(),
+          name,
+          last_name,
+          email,
           this.hashPassword(generatedPassword),
           null,
           new Date(),
@@ -95,12 +99,6 @@ export class UserDataSourceImpl implements UserDataSource {
       const userFound = await this.pool.query<UserDB>(
         `select
           use.use_id,
-          use.use_name,
-          use.use_last_name,
-          use.use_email,
-          use.use_password,
-          use.use_token,
-          use.use_created_date,
           use.use_record_status
         from
           core.core_user use
@@ -119,12 +117,7 @@ export class UserDataSourceImpl implements UserDataSource {
       const userWithEmail = await this.pool.query<UserDB>(
         `select
           use.use_id,
-          use.use_name,
-          use.use_last_name,
           use.use_email,
-          use.use_password,
-          use.use_token,
-          use.use_created_date,
           use.use_record_status
         from
           core.core_user use
@@ -143,12 +136,15 @@ export class UserDataSourceImpl implements UserDataSource {
       // update user
       const updatedUser = await this.pool.query<UserDB>(
         `update core.core_user
-        set use_name      = $1,
-            use_last_name = $2,
-            use_email     = $3
-        where use_id = $4
+        set
+          use_name = $1,
+          use_last_name = $2,
+          use_email = $3
+        where
+          use_id = $4
           and use_record_status = $5
-          returning *;`,
+        returning
+          *;`,
         [name, last_name, email, id, RECORD_STATUS.AVAILABLE],
       );
 
@@ -239,12 +235,6 @@ export class UserDataSourceImpl implements UserDataSource {
       const userFound = await this.pool.query<UserDB>(
         `select
           use.use_id,
-          use.use_name,
-          use.use_last_name,
-          use.use_email,
-          use.use_password,
-          use.use_token,
-          use.use_created_date,
           use.use_record_status
         from
           core.core_user use
@@ -259,10 +249,11 @@ export class UserDataSourceImpl implements UserDataSource {
 
       // delete user
       const deleted = await this.pool.query<UserDB>(
-        `delete
-        from core.core_user
-        where use_id = $1
-        returning *;`,
+        `delete from core.core_user
+        where
+          use_id = $1
+        returning
+          *;`,
         [id],
       );
 

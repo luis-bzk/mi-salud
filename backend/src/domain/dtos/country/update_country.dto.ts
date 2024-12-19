@@ -35,6 +35,14 @@ export class UpdateCountryDto {
     if (prefix.length > 10)
       return ['El prefijo del país no puede tener mas de 10 caracteres'];
 
-    return [undefined, new UpdateCountryDto(parsedId, name, code, prefix)];
+    return [
+      undefined,
+      new UpdateCountryDto(
+        parsedId,
+        name.toLowerCase(),
+        code.toLowerCase(),
+        prefix.toLowerCase(),
+      ),
+    ];
   }
 }

@@ -24,6 +24,13 @@ export class CreateGenreDto {
     if (abbreviation.length > 10)
       return ['La abreviación no puede tener mas de 10 caracteres'];
 
-    return [undefined, new CreateGenreDto(name, description, abbreviation)];
+    return [
+      undefined,
+      new CreateGenreDto(
+        name.toLowerCase(),
+        description.toLowerCase(),
+        abbreviation.toLowerCase(),
+      ),
+    ];
   }
 }

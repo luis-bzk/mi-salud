@@ -30,17 +30,13 @@ export class GenreDataSourceImpl implements GenreDataSource {
       const genreName = await this.pool.query<GenreDB>(
         `select
           cg.gen_id,
-          cg.gen_name,
-          cg.gen_description,
-          cg.gen_abbreviation,
-          cg.gen_created_date,
           cg.gen_record_status
         from
           core.core_genre cg
         where
           lower(cg.gen_name) = $1
           and cg.gen_record_status = $2;`,
-        [name.toLowerCase(), RECORD_STATUS.AVAILABLE],
+        [name, RECORD_STATUS.AVAILABLE],
       );
       if (genreName.rows.length > 0) {
         throw CustomError.conflict('Ya existe un genero con el mismo nombre');
@@ -48,16 +44,16 @@ export class GenreDataSourceImpl implements GenreDataSource {
 
       // create
       const genreCreated = await this.pool.query<GenreDB>(
-        `insert
-            into
-            core.core_genre 
-          (gen_name,
+        `insert into
+          core.core_genre (
+            gen_name,
             gen_description,
             gen_abbreviation,
             gen_created_date,
-            gen_record_status)
-          values ($1,$2,$3,$4,$5)
-          returning *;`,
+            gen_record_status
+          )
+        values
+          ($1, $2, $3, $4, $5) returning *;`,
         [name, description, abbreviation, new Date(), RECORD_STATUS.AVAILABLE],
       );
       return GenreMapper.entityFromObject(genreCreated.rows[0]);
@@ -77,16 +73,12 @@ export class GenreDataSourceImpl implements GenreDataSource {
       const genreFound = await this.pool.query(
         `select
           cg.gen_id,
-          cg.gen_name,
-          cg.gen_description,
-          cg.gen_abbreviation,
-          cg.gen_created_date,
           cg.gen_record_status
         from
           core.core_genre cg
         where
           cg.gen_id = $1
-        and cg.gen_record_status = $2;`,
+          and cg.gen_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
       if (genreFound.rows.length === 0) {
@@ -99,10 +91,6 @@ export class GenreDataSourceImpl implements GenreDataSource {
       const genreName = await this.pool.query(
         `select
           cg.gen_id,
-          cg.gen_name,
-          cg.gen_description,
-          cg.gen_abbreviation,
-          cg.gen_created_date,
           cg.gen_record_status
         from
           core.core_genre cg
@@ -110,7 +98,7 @@ export class GenreDataSourceImpl implements GenreDataSource {
           lower(cg.gen_name) = $1
           and cg.gen_id <> $2
           and cg.gen_record_status = $3;`,
-        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
+        [name, id, RECORD_STATUS.AVAILABLE],
       );
       if (genreName.rows.length > 0) {
         throw CustomError.conflict(
@@ -120,15 +108,13 @@ export class GenreDataSourceImpl implements GenreDataSource {
 
       // update
       const updatedGenre = await this.pool.query(
-        `update
-          core.core_genre
+        `update core.core_genre
         set
           gen_name = $1,
           gen_description = $2,
           gen_abbreviation = $3
         where
-          core_genre.gen_id = $4
-        returning *;`,
+          core_genre.gen_id = $4 returning *;`,
         [name, description, abbreviation, id],
       );
       return GenreMapper.entityFromObject(updatedGenre.rows[0]);
@@ -157,7 +143,7 @@ export class GenreDataSourceImpl implements GenreDataSource {
           core.core_genre cg
         where
           cg.gen_id = $1
-        and cg.gen_record_status = $2;`,
+          and cg.gen_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
       if (genreFound.rows.length === 0) {
@@ -210,16 +196,12 @@ export class GenreDataSourceImpl implements GenreDataSource {
       const genreFound = await this.pool.query(
         `select
           cg.gen_id,
-          cg.gen_name,
-          cg.gen_description,
-          cg.gen_abbreviation,
-          cg.gen_created_date,
           cg.gen_record_status
         from
           core.core_genre cg
         where
           cg.gen_id = $1
-        and cg.gen_record_status = $2;`,
+          and cg.gen_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
       if (genreFound.rows.length === 0) {
@@ -230,12 +212,9 @@ export class GenreDataSourceImpl implements GenreDataSource {
 
       // delete
       const deletedGenre = await this.pool.query(
-        `delete
-        from
-          core.core_genre
+        `delete from core.core_genre cg
         where
-          gen_id = $1
-        returning *;`,
+          cg.gen_id = $1 returning *;`,
       );
       return GenreMapper.entityFromObject(deletedGenre.rows[0]);
     } catch (error) {

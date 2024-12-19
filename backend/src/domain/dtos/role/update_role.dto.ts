@@ -30,6 +30,13 @@ export class UpdateRoleDto {
     if (description.length > 200)
       return ['La descripción del rol no puede tener mas de 200 caracteres'];
 
-    return [undefined, new UpdateRoleDto(parsedId, name, description)];
+    return [
+      undefined,
+      new UpdateRoleDto(
+        parsedId,
+        name.toLowerCase(),
+        description.toLowerCase(),
+      ),
+    ];
   }
 }

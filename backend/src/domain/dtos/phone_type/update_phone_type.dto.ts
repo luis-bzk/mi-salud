@@ -30,6 +30,13 @@ export class UpdatePhoneTypeDto {
     if (description.length > 100)
       return ['La descripción no puede tener mas de 100 caracteres'];
 
-    return [undefined, new UpdatePhoneTypeDto(parsedId, name, description)];
+    return [
+      undefined,
+      new UpdatePhoneTypeDto(
+        parsedId,
+        name.toLowerCase(),
+        description.toLowerCase(),
+      ),
+    ];
   }
 }

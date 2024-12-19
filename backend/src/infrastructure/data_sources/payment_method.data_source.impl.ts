@@ -31,16 +31,13 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
       const paymentMethod = await this.pool.query<PaymentMethodDB>(
         `select
           cpm.pme_id,
-          cpm.pme_image,
-          cpm.pme_name,
-          cpm.pme_description,
-          cpm.pme_created_date,
           cpm.pme_record_status
         from
-          core.core_payment_method cpm 
-          where lower(cpm.pme_name) = $1
+          core.core_payment_method cpm
+        where
+          lower(cpm.pme_name) = $1
           and cpm.pme_record_status = $2;`,
-        [name.toLowerCase(), RECORD_STATUS.AVAILABLE],
+        [name, RECORD_STATUS.AVAILABLE],
       );
       if (paymentMethod.rows.length > 0) {
         throw CustomError.conflict(
@@ -50,16 +47,16 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
 
       // create
       const newPaymentMethod = await this.pool.query<PaymentMethodDB>(
-        `insert
-          into
-          core.core_payment_method 
-          (pme_image,
-          pme_name,
-          pme_description,
-          pme_created_date,
-          pme_record_status)
-        values ($1,$2,$3,$4,$5)
-        returning *;`,
+        `insert into
+          core.core_payment_method (
+            pme_image,
+            pme_name,
+            pme_description,
+            pme_created_date,
+            pme_record_status
+          )
+        values
+          ($1, $2, $3, $4, $5) returning *;`,
         [image, name, description, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
@@ -82,14 +79,11 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
       const paymentMethod = await this.pool.query<PaymentMethodDB>(
         `select
           cpm.pme_id,
-          cpm.pme_image,
-          cpm.pme_name,
-          cpm.pme_description,
-          cpm.pme_created_date,
           cpm.pme_record_status
         from
-          core.core_payment_method cpm 
-          where cpm.pme_id = $1
+          core.core_payment_method cpm
+        where
+          cpm.pme_id = $1
           and cpm.pme_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
@@ -101,17 +95,14 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
       const otherPaymentMethod = await this.pool.query<PaymentMethodDB>(
         `select
           cpm.pme_id,
-          cpm.pme_image,
-          cpm.pme_name,
-          cpm.pme_description,
-          cpm.pme_created_date,
           cpm.pme_record_status
         from
-          core.core_payment_method cpm 
-          where lower(cpm.pme_name) = $1
+          core.core_payment_method cpm
+        where
+          lower(cpm.pme_name) = $1
           and cpm.pme_id = $2
           and cpm.pme_record_status = $3;`,
-        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
+        [name, id, RECORD_STATUS.AVAILABLE],
       );
       if (otherPaymentMethod.rows.length > 0) {
         throw CustomError.conflict(
@@ -121,11 +112,13 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
 
       // update
       const updatedPaymentMethod = await this.pool.query<PaymentMethodDB>(
-        `update core.core_payment_method 
-        set pme_image = $1,
+        `update core.core_payment_method
+        set
+          pme_image = $1,
           pme_name = $2,
           pme_description = $3
-        where pme_id = $4
+        where
+          pme_id = $4
         returning *;`,
         [image, name, description, id],
       );
@@ -153,8 +146,9 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
           cpm.pme_created_date,
           cpm.pme_record_status
         from
-          core.core_payment_method cpm 
-          where cpm.pme_id = $1
+          core.core_payment_method cpm
+        where
+          cpm.pme_id = $1
           and cpm.pme_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
@@ -180,17 +174,19 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
     try {
       const registers = await this.pool.query<PaymentMethodDB>(
         `select
-            cpm.pme_id,
-            cpm.pme_image,
-            cpm.pme_name,
-            cpm.pme_description,
-            cpm.pme_created_date,
-            cpm.pme_record_status
-          from
-            core.core_payment_method cpm 
-            where cpm.pme_record_status = $1
-            order by cpm.pme_name 
-            limit $2 offset $3;`,
+          cpm.pme_id,
+          cpm.pme_image,
+          cpm.pme_name,
+          cpm.pme_description,
+          cpm.pme_created_date,
+          cpm.pme_record_status
+        from
+          core.core_payment_method cpm
+        where
+          cpm.pme_record_status = $1
+        order by
+          cpm.pme_name
+        limit $2 offset $3;`,
         [RECORD_STATUS.AVAILABLE, limit, offset],
       );
 
@@ -213,16 +209,13 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
     try {
       const paymentMethod = await this.pool.query<PaymentMethodDB>(
         `select
-            cpm.pme_id,
-            cpm.pme_image,
-            cpm.pme_name,
-            cpm.pme_description,
-            cpm.pme_created_date,
-            cpm.pme_record_status
-          from
-            core.core_payment_method cpm 
-            where cpm.pme_id = $1
-            and cpm.pme_record_status = $2;`,
+          cpm.pme_id,
+          cpm.pme_record_status
+        from
+          core.core_payment_method cpm
+        where
+          cpm.pme_id = $1
+          and cpm.pme_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
       if (paymentMethod.rows.length === 0) {
@@ -230,12 +223,10 @@ export class PaymentMethodDataSourceImpl implements PaymentMethodDataSource {
       }
 
       const deletedRegister = await this.pool.query<PaymentMethodDB>(
-        `delete
-          from
-            core.core_payment_method
-          where
-            pme_id = $1 
-          returning *;`,
+        `delete from core.core_payment_method
+        where
+          pme_id = $1
+        returning *;`,
         [id],
       );
 

@@ -26,6 +26,13 @@ export class CreatePaymentMethodDto {
     if (description.length > 300)
       return ['La descripción no puede tener mas de 100 caracteres'];
 
-    return [undefined, new CreatePaymentMethodDto(image, name, description)];
+    return [
+      undefined,
+      new CreatePaymentMethodDto(
+        image,
+        name.toLowerCase(),
+        description.toLowerCase(),
+      ),
+    ];
   }
 }

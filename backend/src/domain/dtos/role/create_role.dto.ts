@@ -18,6 +18,9 @@ export class CreateRoleDto {
     if (description.length > 200)
       return ['La descripción del rol no puede tener mas de 200 caracteres'];
 
-    return [undefined, new CreateRoleDto(name, description)];
+    return [
+      undefined,
+      new CreateRoleDto(name.toLowerCase(), description.toLowerCase()),
+    ];
   }
 }

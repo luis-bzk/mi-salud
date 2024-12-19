@@ -49,7 +49,13 @@ export class UpdateProvinceDto {
 
     return [
       undefined,
-      new UpdateProvinceDto(parsedId, name, code, prefix, id_country),
+      new UpdateProvinceDto(
+        parsedId,
+        name.toLowerCase(),
+        code.toLowerCase(),
+        prefix.toLowerCase(),
+        id_country,
+      ),
     ];
   }
 }

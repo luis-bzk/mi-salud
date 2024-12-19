@@ -42,7 +42,12 @@ export class UpdateGenreDto {
 
     return [
       undefined,
-      new UpdateGenreDto(parsedId, name, description, abbreviation),
+      new UpdateGenreDto(
+        parsedId,
+        name.toLowerCase(),
+        description.toLowerCase(),
+        abbreviation.toLowerCase(),
+      ),
     ];
   }
 }

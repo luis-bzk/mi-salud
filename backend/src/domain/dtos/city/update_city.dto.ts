@@ -40,7 +40,7 @@ export class UpdateCityDto {
 
     return [
       undefined,
-      new UpdateCityDto(parsedId, name, id_province, id_country),
+      new UpdateCityDto(parsedId, name.toLowerCase(), id_province, id_country),
     ];
   }
 }

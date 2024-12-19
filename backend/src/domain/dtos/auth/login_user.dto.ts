@@ -17,6 +17,6 @@ export class LoginUserDto {
     if (!Validators.email.test(email)) return ['El email no es valido'];
     if (!password) return ['La contraseña del usuario es requerida'];
 
-    return [undefined, new LoginUserDto(email, password)];
+    return [undefined, new LoginUserDto(email.toLowerCase(), password)];
   }
 }

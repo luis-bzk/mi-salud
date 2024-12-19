@@ -28,18 +28,16 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
     try {
       // validate that don't exist a province with the same name
       const result = await this.pool.query<ProvinceDB>(
-        `select pro_id,
-                pro_name,
-                pro_code,
-                id_country,
-                pro_prefix,
-                pro_created_date,
-                pro_record_status
-        from core.core_province pro
-        where lower(pro.pro_name) = $1
+        `select
+          pro_id,
+          pro_record_status
+        from
+          core.core_province pro
+        where
+          lower(pro.pro_name) = $1
           and pro.id_country = $2
           and pro.pro_record_status = $3;`,
-        [name.toLowerCase(), id_country, RECORD_STATUS.AVAILABLE],
+        [name, id_country, RECORD_STATUS.AVAILABLE],
       );
 
       if (result.rows.length > 0) {
@@ -50,15 +48,19 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
 
       // create province
       const provinceCreated = await this.pool.query<ProvinceDB>(
-        `insert into core.core_province
-        (pro_name,
-         pro_code,
-         id_country,
-         pro_prefix,
-         pro_created_date,
-         pro_record_status)
-        values ($1, $2, $3, $4, $5, $6)
-        returning *;`,
+        `insert into
+          core.core_province (
+            pro_name,
+            pro_code,
+            id_country,
+            pro_prefix,
+            pro_created_date,
+            pro_record_status
+          )
+        values
+          ($1, $2, $3, $4, $5, $6)
+        returning
+          *;`,
         [name, code, id_country, prefix, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
@@ -78,15 +80,13 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
     try {
       // validate exists province
       const province = await this.pool.query<ProvinceDB>(
-        `select pro_id,
-                pro_name,
-                pro_code,
-                id_country,
-                pro_prefix,
-                pro_created_date,
-                pro_record_status
-        from core.core_province pro
-        where pro.pro_id = $1
+        `select
+          pro_id,
+          pro_record_status
+        from
+          core.core_province pro
+        where
+          pro.pro_id = $1
           and pro.pro_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
@@ -98,15 +98,13 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
 
       // validate that don't exist a province with the same name
       const provinceToUpdate = await this.pool.query<ProvinceDB>(
-        `select pro_id,
-                pro_name,
-                pro_code,
-                id_country,
-                pro_prefix,
-                pro_created_date,
-                pro_record_status
-        from core.core_province pro
-        where lower(pro.pro_name) = $1
+        `select
+          pro_id,
+          pro_record_status
+        from
+          core.core_province pro
+        where
+          lower(pro.pro_name) = $1
           and pro.id_country = $2
           and pro.pro_id <> $3
           and pro.pro_record_status = $4;`,
@@ -121,12 +119,15 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
       // update
       const updatedRow = await this.pool.query<ProvinceDB>(
         `update core.core_province
-        set pro_name   = $1,
-            pro_code   = $2,
-            id_country = $3,
-            pro_prefix = $4
-        where pro_id = $5
-        returning *;`,
+        set
+          pro_name = $1,
+          pro_code = $2,
+          id_country = $3,
+          pro_prefix = $4
+        where
+          pro_id = $5
+        returning
+          *;`,
         [name, code, id_country, prefix, id],
       );
 
@@ -145,15 +146,18 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
 
     try {
       const result = await this.pool.query<ProvinceDB>(
-        `select pro.pro_id,
-              pro.pro_name,
-              pro.pro_code,
-              pro.pro_prefix,
-              pro.id_country,
-              pro.pro_created_date,
-              pro.pro_record_status
-        from core.core_province pro
-        where pro.pro_id = $1
+        `select
+          pro.pro_id,
+          pro.pro_name,
+          pro.pro_code,
+          pro.pro_prefix,
+          pro.id_country,
+          pro.pro_created_date,
+          pro.pro_record_status
+        from
+          core.core_province pro
+        where
+          pro.pro_id = $1
           and pro.pro_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
@@ -179,16 +183,19 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
       limit,
       offset,
     ];
-    let query = `select pro.pro_id,
-           pro.pro_name,
-           pro.pro_code,
-           pro.pro_prefix,
-           pro.id_country,
-           pro.pro_created_date,
-           pro.pro_record_status
-    from core.core_province pro
-    join core.core_country cou on pro.id_country = cou.cou_id
-    where pro.pro_record_status = $1 `;
+    let query = `select
+                  pro.pro_id,
+                  pro.pro_name,
+                  pro.pro_code,
+                  pro.pro_prefix,
+                  pro.id_country,
+                  pro.pro_created_date,
+                  pro.pro_record_status
+                from
+                  core.core_province pro
+                  join core.core_country cou on pro.id_country = cou.cou_id
+                where
+                  pro.pro_record_status = $1 `;
 
     if (id_country) {
       query += ` and cou.cou_id = $2 
@@ -218,15 +225,13 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
     try {
       // validate exists province
       const province = await this.pool.query<ProvinceDB>(
-        `select pro_id,
-                pro_name,
-                pro_code,
-                id_country,
-                pro_prefix,
-                pro_created_date,
-                pro_record_status
-        from core.core_province pro
-        where pro.pro_id = $1
+        `select
+          pro_id,
+          pro_record_status
+        from
+          core.core_province pro
+        where
+          pro.pro_id = $1
           and pro.pro_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
@@ -237,11 +242,12 @@ export class ProvinceDataSourceImpl implements ProvinceDataSource {
       }
 
       const deleted = await this.pool.query<ProvinceDB>(
-        `delete
-        from core.core_province
-        where pro_id = $1
+        `delete from core.core_province
+        where
+          pro_id = $1
           and pro_record_status = $2
-        returning *;`,
+        returning
+          *;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
 

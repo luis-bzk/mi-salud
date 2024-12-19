@@ -20,6 +20,12 @@ export class CreateNotificationTypeDto {
     if (description.length > 300)
       return ['La descripción no puede tener mas de 300 caracteres'];
 
-    return [undefined, new CreateNotificationTypeDto(name, description)];
+    return [
+      undefined,
+      new CreateNotificationTypeDto(
+        name.toLowerCase(),
+        description.toLowerCase(),
+      ),
+    ];
   }
 }

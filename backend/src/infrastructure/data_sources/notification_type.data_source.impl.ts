@@ -33,16 +33,13 @@ export class NotificationTypeDataSourceImpl
       const registerName = await this.pool.query<NotificationTypeDB>(
         `select
           cnt.nty_id,
-          cnt.nty_name,
-          cnt.nty_description,
-          cnt.nty_created_date,
           cnt.nty_record_status
         from
           core.core_notification_type cnt
         where
           lower(cnt.nty_name) = $1
           and cnt.nty_record_status = $2;`,
-        [name.toLowerCase(), RECORD_STATUS.AVAILABLE],
+        [name, RECORD_STATUS.AVAILABLE],
       );
 
       if (registerName.rows.length > 0) {
@@ -53,12 +50,13 @@ export class NotificationTypeDataSourceImpl
       const newRegister = await this.pool.query<NotificationTypeDB>(
         `insert into
           core.core_notification_type (
-          nty_name,
-          nty_description,
-          nty_created_date,
-          nty_record_status)
-        values($1,$2,$3,$4)
-        returning *;`,
+            nty_name,
+            nty_description,
+            nty_created_date,
+            nty_record_status
+          )
+        values
+          ($1, $2, $3, $4) returning *;`,
         [name, description, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
@@ -81,9 +79,6 @@ export class NotificationTypeDataSourceImpl
       const register = await this.pool.query<NotificationTypeDB>(
         `select
           cnt.nty_id,
-          cnt.nty_name,
-          cnt.nty_description,
-          cnt.nty_created_date,
           cnt.nty_record_status
         from
           core.core_notification_type cnt
@@ -103,9 +98,6 @@ export class NotificationTypeDataSourceImpl
       const registerName = await this.pool.query<NotificationTypeDB>(
         `select
           cnt.nty_id,
-          cnt.nty_name,
-          cnt.nty_description,
-          cnt.nty_created_date,
           cnt.nty_record_status
         from
           core.core_notification_type cnt
@@ -113,7 +105,7 @@ export class NotificationTypeDataSourceImpl
           lower(cnt.nty_name) = $1
           and cnt.nty_id <> $2
           and cnt.nty_record_status = $2;`,
-        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
+        [name, id, RECORD_STATUS.AVAILABLE],
       );
       if (registerName.rows.length > 0) {
         throw CustomError.conflict('ya existe un registro con el mismo nombre');
@@ -121,14 +113,12 @@ export class NotificationTypeDataSourceImpl
 
       // update
       const registerUpdated = await this.pool.query<NotificationTypeDB>(
-        `update
-          core.core_notification_type cnt
+        `update core.core_notification_type cnt
         set
           nty_name = $1,
           nty_description = $2
         where
-          nty_id = $3
-        returning *;`,
+          nty_id = $3 returning *;`,
         [name, description, id],
       );
 
@@ -150,16 +140,16 @@ export class NotificationTypeDataSourceImpl
       // find by id
       const register = await this.pool.query<NotificationTypeDB>(
         `select
-                cnt.nty_id,
-                cnt.nty_name,
-                cnt.nty_description,
-                cnt.nty_created_date,
-                cnt.nty_record_status
-              from
-                core.core_notification_type cnt
-              where
-                cnt.nty_id = $1
-                and cnt.nty_record_status = $2;`,
+          cnt.nty_id,
+          cnt.nty_name,
+          cnt.nty_description,
+          cnt.nty_created_date,
+          cnt.nty_record_status
+        from
+          core.core_notification_type cnt
+        where
+          cnt.nty_id = $1
+          and cnt.nty_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
 
@@ -219,16 +209,13 @@ export class NotificationTypeDataSourceImpl
       // find by id
       const register = await this.pool.query<NotificationTypeDB>(
         `select
-                cnt.nty_id,
-                cnt.nty_name,
-                cnt.nty_description,
-                cnt.nty_created_date,
-                cnt.nty_record_status
-              from
-                core.core_notification_type cnt
-              where
-                cnt.nty_id = $1
-                and cnt.nty_record_status = $2;`,
+          cnt.nty_id,
+          cnt.nty_record_status
+        from
+          core.core_notification_type cnt
+        where
+          cnt.nty_id = $1
+          and cnt.nty_record_status = $2;`,
         [id, RECORD_STATUS.AVAILABLE],
       );
 
@@ -240,9 +227,7 @@ export class NotificationTypeDataSourceImpl
 
       // delete
       const deletedRegister = await this.pool.query<NotificationTypeDB>(
-        `delete
-        from
-          core.core_notification_type
+        `delete from core.core_notification_type
         where
           nty_id = $1 returning *;`,
         [id],

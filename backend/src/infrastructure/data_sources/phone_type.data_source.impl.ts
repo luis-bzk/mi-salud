@@ -29,16 +29,13 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
       const phoneTypeName = await this.pool.query<PhoneTypeDB>(
         `select
           cpt.pty_id,
-          cpt.pty_name,
-          cpt.pty_description,
-          cpt.pty_created_date,
           cpt.pty_record_status
         from
           core.core_phone_type cpt
         where
           lower(cpt.pty_name) = $1
           and cpt.pty_record_status = $2;`,
-        [name.toLowerCase(), RECORD_STATUS.AVAILABLE],
+        [name, RECORD_STATUS.AVAILABLE],
       );
       if (phoneTypeName.rows.length > 0) {
         throw CustomError.conflict(
@@ -48,15 +45,17 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
 
       // create
       const newPhoneType = await this.pool.query<PhoneTypeDB>(
-        `insert
-          into
+        `insert into
           core.core_phone_type (
-          pty_name,
-          pty_description,
-          pty_created_date,
-          pty_record_status )
-        values ($1,$2,$3,$4)
-        returning *;`,
+            pty_name,
+            pty_description,
+            pty_created_date,
+            pty_record_status
+          )
+        values
+          ($1, $2, $3, $4)
+        returning
+          *;`,
         [name, description, new Date(), RECORD_STATUS.AVAILABLE],
       );
 
@@ -77,9 +76,6 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
       const phoneType = await this.pool.query<PhoneTypeDB>(
         `select
           cpt.pty_id,
-          cpt.pty_name,
-          cpt.pty_description,
-          cpt.pty_created_date,
           cpt.pty_record_status
         from
           core.core_phone_type cpt
@@ -98,9 +94,6 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
       const phoneTypeName = await this.pool.query<PhoneTypeDB>(
         `select
           cpt.pty_id,
-          cpt.pty_name,
-          cpt.pty_description,
-          cpt.pty_created_date,
           cpt.pty_record_status
         from
           core.core_phone_type cpt
@@ -108,7 +101,7 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
           lower(cpt.pty_name) = $1
           and cpt.pty_id <> $2
           and cpt.pty_record_status = $3;`,
-        [name.toLowerCase(), id, RECORD_STATUS.AVAILABLE],
+        [name, id, RECORD_STATUS.AVAILABLE],
       );
       if (phoneTypeName.rows.length > 0) {
         throw CustomError.conflict(
@@ -118,14 +111,14 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
 
       // update
       const phoneTypeUpdated = await this.pool.query<PhoneTypeDB>(
-        `update
-          core.core_phone_type
+        `update core.core_phone_type
         set
           pty_name = $1,
           pty_description = $2
         where
           pty_id = $3
-        returning *;`,
+        returning
+          *;`,
         [name, description, id],
       );
 
@@ -210,9 +203,6 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
       const phoneType = await this.pool.query<PhoneTypeDB>(
         `select
           cpt.pty_id,
-          cpt.pty_name,
-          cpt.pty_description,
-          cpt.pty_created_date,
           cpt.pty_record_status
         from
           core.core_phone_type cpt
@@ -228,12 +218,11 @@ export class PhoneTypeDataSourceImpl implements PhoneTypeDataSource {
       }
 
       const phoneTypeDeleted = await this.pool.query<PhoneTypeDB>(
-        `delete
-        from
-          core.core_phone_type
+        `delete from core.core_phone_type
         where
           pty_id = $1
-        returning *;`,
+        returning
+          *;`,
         [id],
       );
 
