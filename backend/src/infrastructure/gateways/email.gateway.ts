@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { envs } from '../../config';
+import { EnvConfig } from '../../config';
 
 export class EmailGateway {
   constructor() {}
@@ -16,18 +16,18 @@ export class EmailGateway {
     token: string;
   }): Promise<{}> {
     const transport = nodemailer.createTransport({
-      host: envs.SMTP_HOST,
-      port: Number(envs.SMTP_PORT),
+      host: EnvConfig().SMTP_HOST,
+      port: Number(EnvConfig().SMTP_PORT),
       auth: {
-        user: envs.SMTP_USER,
-        pass: envs.SMTP_PASS,
+        user: EnvConfig().SMTP_USER,
+        pass: EnvConfig().SMTP_PASS,
       },
     });
 
     await transport.sendMail({
-      from: `${envs.SYSTEM_NAME} <gsgroup@gmail.com>`,
+      from: `${EnvConfig().SYSTEM_NAME} <gsgroup@gmail.com>`,
       to: email,
-      subject: `${envs.SYSTEM_NAME} - Confirma tu cuenta`,
+      subject: `${EnvConfig().SYSTEM_NAME} - Confirma tu cuenta`,
       text: 'Valida tu dirección email para acceder a tu cuenta por completo',
       html: `
       <!DOCTYPE html>
@@ -35,7 +35,7 @@ export class EmailGateway {
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>${envs.SYSTEM_NAME} - Confirma tu cuenta</title>
+          <title>${EnvConfig().SYSTEM_NAME} - Confirma tu cuenta</title>
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
           </style>
@@ -110,14 +110,14 @@ export class EmailGateway {
         </head>
         <body>
           <div class="container">
-            <h1>Te damos la bienvenida a ${envs.SYSTEM_NAME} 👋</h1>
+            <h1>Te damos la bienvenida a ${EnvConfig().SYSTEM_NAME} 👋</h1>
 
             <div class="content_mail">
               <p>Hola ${name} ${last_name}</p>
               <p>Confirma tu dirección de correo para completar tu registro:</p>
             </div>
 
-            <a href="${envs.FRONTEND_URL}/auth/verify/${token}">
+            <a href="${EnvConfig().FRONTEND_URL}/auth/verify/${token}">
               <button class="button">Confirmar mi dirección de correo electrónico</button>
             </a>
 
@@ -150,18 +150,18 @@ export class EmailGateway {
     password: string;
   }): Promise<{}> {
     const transport = nodemailer.createTransport({
-      host: envs.SMTP_HOST,
-      port: Number(envs.SMTP_PORT),
+      host: EnvConfig().SMTP_HOST,
+      port: Number(EnvConfig().SMTP_PORT),
       auth: {
-        user: envs.SMTP_USER,
-        pass: envs.SMTP_PASS,
+        user: EnvConfig().SMTP_USER,
+        pass: EnvConfig().SMTP_PASS,
       },
     });
 
     await transport.sendMail({
-      from: `${envs.SYSTEM_NAME} <gsgroup@gmail.com>`,
+      from: `${EnvConfig().SYSTEM_NAME} <gsgroup@gmail.com>`,
       to: email,
-      subject: `${envs.SYSTEM_NAME} - Confirma tu cuenta`,
+      subject: `${EnvConfig().SYSTEM_NAME} - Confirma tu cuenta`,
       text: 'Valida tu dirección email para acceder a tu cuenta por completo',
       html: `
       <!DOCTYPE html>
@@ -169,7 +169,7 @@ export class EmailGateway {
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>${envs.SYSTEM_NAME} - Confirma tu cuenta</title>
+          <title>${EnvConfig().SYSTEM_NAME} - Confirma tu cuenta</title>
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
           </style>
@@ -259,11 +259,11 @@ export class EmailGateway {
         </head>
         <body>
           <div class="container">
-            <h1>Te damos la bienvenida a ${envs.SYSTEM_NAME} 👋</h1>
+            <h1>Te damos la bienvenida a ${EnvConfig().SYSTEM_NAME} 👋</h1>
 
             <div class="content_mail">
               <p>Hola ${name} ${last_name}</p>
-              <p>Te han agregado como colaborador en el sistema ${envs.SYSTEM_NAME}, confirma tu cuenta y accede inmediatamente</p>
+              <p>Te han agregado como colaborador en el sistema ${EnvConfig().SYSTEM_NAME}, confirma tu cuenta y accede inmediatamente</p>
               <br />
               <p>
                 Hemos generado una contraseña temporal para tu acceso. Te pedimos que no la compartas con nadie y que la
@@ -275,7 +275,7 @@ export class EmailGateway {
               </div>
             </div>
 
-            <a href="${envs.FRONTEND_URL}/auth">
+            <a href="${EnvConfig().FRONTEND_URL}/auth">
               <button class="button">Ir a mi cuenta</button>
             </a>
 
@@ -308,18 +308,18 @@ export class EmailGateway {
     token: string;
   }): Promise<{}> {
     const transport = nodemailer.createTransport({
-      host: envs.SMTP_HOST,
-      port: Number(envs.SMTP_PORT),
+      host: EnvConfig().SMTP_HOST,
+      port: Number(EnvConfig().SMTP_PORT),
       auth: {
-        user: envs.SMTP_USER,
-        pass: envs.SMTP_PASS,
+        user: EnvConfig().SMTP_USER,
+        pass: EnvConfig().SMTP_PASS,
       },
     });
 
     await transport.sendMail({
-      from: `${envs.SYSTEM_NAME} <gsgroup@gmail.com>`,
+      from: `${EnvConfig().SYSTEM_NAME} <gsgroup@gmail.com>`,
       to: email,
-      subject: `${envs.SYSTEM_NAME} - Recuperar mi cuenta`,
+      subject: `${EnvConfig().SYSTEM_NAME} - Recuperar mi cuenta`,
       text: 'Recupera el acceso a tu cuenta',
       html: `
       <!DOCTYPE html>
@@ -327,7 +327,7 @@ export class EmailGateway {
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>${envs.SYSTEM_NAME} - Confirma tu cuenta</title>
+          <title>${EnvConfig().SYSTEM_NAME} - Confirma tu cuenta</title>
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
           </style>
@@ -408,12 +408,12 @@ export class EmailGateway {
               <p>Vamos a recuperar el acceso a tu cuenta</p>
               <br />
               <p>
-                Nos has solicitado recuperar el acceso a ${envs.SYSTEM_NAME}. No te preocupes, es muy común. Para crear una nueva
+                Nos has solicitado recuperar el acceso a ${EnvConfig().SYSTEM_NAME}. No te preocupes, es muy común. Para crear una nueva
                 contraseña, haz clic en el siguiente enlace:
               </p>
             </div>
 
-            <a href="${envs.FRONTEND_URL}/auth/change-password/${token}">
+            <a href="${EnvConfig().FRONTEND_URL}/auth/change-password/${token}">
               <button class="button">Cambiar mi contraseña</button>
             </a>
 

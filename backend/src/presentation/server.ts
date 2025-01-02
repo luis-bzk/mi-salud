@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 
-import { envs } from '../config';
+import { EnvConfig } from '../config';
 
 interface Options {
   port?: number;
@@ -27,7 +27,7 @@ export class Server {
     this.app.use(express.json());
 
     //   cors
-    const whitelist = [envs.FRONTEND_URL];
+    const whitelist = [EnvConfig().FRONTEND_URL];
 
     const corsOptions = {
       origin: function (origin: any, callback: any) {

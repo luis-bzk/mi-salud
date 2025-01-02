@@ -1,5 +1,5 @@
 import { Server } from './presentation/server';
-import { envs } from './config';
+import { EnvConfig } from './config';
 import { AppRoutes } from './presentation/routes';
 import { PostgresDatabase } from './data';
 
@@ -10,15 +10,15 @@ import { PostgresDatabase } from './data';
 async function main() {
   // Connection configuration to PostgreSQL
   await PostgresDatabase.connect({
-    user: envs.DB_USER,
-    host: envs.DB_HOST,
-    database: envs.DB_DATABASE,
-    password: envs.DB_PASSWORD,
-    port: envs.DB_PORT,
+    user: EnvConfig().DB_USER,
+    host: EnvConfig().DB_HOST,
+    database: EnvConfig().DB_DATABASE,
+    password: EnvConfig().DB_PASSWORD,
+    port: EnvConfig().DB_PORT,
   });
 
   await new Server({
-    port: envs.PORT,
+    port: EnvConfig().PORT,
     routes: AppRoutes.routes,
   }).start();
 }
